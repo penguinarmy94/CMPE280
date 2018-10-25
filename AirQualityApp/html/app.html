@@ -1,0 +1,80 @@
+<html lang="en">
+    <title>AirSafe - Home</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <style>
+        html, body { width: 100%; height: 600px; }
+        #heading { width: 100%; height: 150px; }
+        .nav { border: 1px solid black; width: 20%; }
+        #body_block { width: 100%; height: 450px; overflow-y: auto; scroll-behavior: smooth; }
+        #footer { width: 100%; height: 40px; }
+        section { width: 100%; height: 700px; border: 2px solid black; }
+        .container-fluid { margin: auto; }
+    </style>
+</html>
+<body>
+    <div class="container-fluid">
+    <div id="heading">
+        <div id="title"><img src=""><h3>AirSafe: Quality Monitoring System</h3></div>
+        <div id="navigation">
+            <nav class="navbar navbar-inverse navbar-fixed-top">
+                <button class="nav" id="home_button" onclick="window.location.href='#air-safe'">Air Monitor</button>
+                <button class="nav" id="forecast_button" onclick="window.location.href='#forecast'">Forecast</button>
+                <button class="nav" id="past_data_button" onclick="window.location.href='#past'">Past Data</button>
+                <button class="nav" id="about_us_button" onclick="window.location.href='#about'">About Us</button>
+                <button class="nav" id="subscribe_button" onclick="window.location.href='#subscribe'">Subscribe</button>
+            </nav>
+        </div>
+        <div id="search">
+            <form id="search-form">
+                Search: <input type="text" name="search" placeholder="Enter a city,state or zip code">
+                <input type="button" name="search-button" value="Search">
+            </form>
+        </div>
+    </div>
+    <div id="body_block" data-spy="scroll" data-target=".navbar">
+        <section id="air-safe">
+            This is the air safe section
+        </section>
+        <section id="forecast">
+            This is the forecast section
+        </section>
+        <section id="past">
+            This is the past data section
+        </section>
+        <section id="about">
+            This is the about us section
+        </section>
+        <section id="subscribe">
+            This is the subscribe section
+        </section>
+    </div>
+    <div id="footer">
+
+    </div>
+</div>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <script>
+        //cross-browser smooth scrolling (w3schools reference)
+        /*
+        $(document).ready(function(){
+            $("a").on('click', function(event) {
+
+                if (this.hash !== "") {
+                    event.preventDefault();
+                    var hash = this.hash;
+                    $("#body-block").animate({
+                        scrollTop: $(hash).offset().top
+                        }, 800, function(){
+                        window.location.hash = hash;
+                    });
+                }
+            });
+        });
+        */
+    </script>
+</body>
+</html>
