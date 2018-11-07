@@ -1,4 +1,7 @@
 from django.shortcuts import render
+import pymysql
+import json
+from django.http import HttpResponse
 #import requests, socket
 #from geoip import geolite2
 
@@ -21,3 +24,12 @@ def latest(request):
 
     return render(request, 'index.html', {'cities': "", 'lat': -30, 'lng': -17.5})
     #result = requests.get("https://api.openaq.org/v1/latest")
+
+def GetPastData(request):
+    conn= pymysql.connect(host='airnow.cq2wcl14nou2.us-west-1.rds.amazonaws.com'
+    ,user='root',password='password',db='airsafe')
+    cur=conn.cursor()
+    sql = "SELECT JSON_OBJECT('pm',pm,'ozone',ozone) FROM airsafe.AQ;"
+    cur.execute(sql)
+    data = cur.fetchall()
+    return HttpResponse(json.dumps(data))
