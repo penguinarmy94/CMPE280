@@ -2,16 +2,18 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from . import models
 import requests, json
+import pymysql
+import json
+from django.http import HttpResponse
 
-# Create your views here.
 def index(request):
     """
     result = requests.get("https://api.openaq.org/v1/cities?limit=1", timeout=8)
     cities = result.json()['results']
     """
-    return render(request, 'app.html', {'cities': "cities", 'lat': 0, 'lng': 0})
+    return render(request, 'app.html', {'cities': "cities", 'lat': -30, 'lng': -17.5})
 
-def current(request):
+def latest(request):
     if request.method == "GET":
         if request.GET["search"]:
             zipcode = request.GET["search"]
@@ -23,13 +25,17 @@ def current(request):
     else:
         return HttpResponse(json.dumps({"type": "not a request"}))
 
-def past(request):
-    return HttpResponse("404")
-
 def future(request):
     return HttpResponse("404")
 
 def updatePast(request):
     return HttpResponse("404")
 
-   
+def GetPastData(request):
+    conn= pymysql.connect(host='airnow.cq2wcl14nou2.us-west-1.rds.amazonaws.com'
+    ,user='root',password='password',db='airsafe')
+    cur=conn.cursor()
+    sql = "SELECT JSON_OBJECT('pm',pm,'ozone',ozone) FROM airsafe.AQ;"
+    cur.execute(sql)
+    data = cur.fetchall()
+    return HttpResponse(json.dumps(data))

@@ -4,8 +4,8 @@ from . import views
 
 urlpatterns = [
     path('', views.index, name='index'),
-    path('current', views.current, name='latest'),
-    path('past', views.past, name='past'),
+    path('latest', views.latest, name='latest'),
     path('future', views.future, name='future'),
-    path('load', views.updatePast, name='load')
+    path('load', views.updatePast, name='load'),
+    path('GetData', views.GetPastData, name='GetData'),
 ]
