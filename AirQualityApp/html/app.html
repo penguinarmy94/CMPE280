@@ -50,7 +50,7 @@
                 debugger
                 var y=[];
                     $.ajax({
-                        'url' : 'http://localhost:8000/GetData',
+                        'url' : '/GetData',
                         'type' : 'GET',
                         'success' : function(data) {   
                             debugger   
@@ -125,7 +125,7 @@
                     var AQpm=[];
                     var AQozone=[];
                     $.ajax({
-                        'url' : 'http://localhost:8000/GetData',
+                        'url' : '/GetData',
                         'type' : 'GET',
                         'success' : function(data) {   
                             debugger   
@@ -234,7 +234,7 @@
                 }
             }
             
-            url = "http://localhost:8000/latest?" + search;
+            url = "/latest?" + search;
             req.open("GET", url);
             req.setRequestHeader("Content-Type", "application/json");
             req.send();
