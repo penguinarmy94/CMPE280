@@ -25,7 +25,7 @@ SECRET_KEY = '#k4p1)-d)am8!)3hkin^a5s&p@1^xuu5%8%msu!^=qe@=v)=wq'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['airsafe-env.tqm8pqbcyp.us-west-1.elasticbeanstalk.com']
 
 
 # Application definition
@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'AirQualityApp'
+    'AirQualityApp',
 ]
 
 MIDDLEWARE = [
@@ -85,16 +85,6 @@ DATABASES = {
         'PORT': '3306'
     }
 }
-
-
-"""
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
-"""
 
 
 # Password validation
