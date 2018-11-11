@@ -10,15 +10,15 @@ https://docs.djangoproject.com/en/2.0/howto/deployment/wsgi/
 import os, threading, datetime
 
 from django.core.wsgi import get_wsgi_application
-from AirQualityApp import views
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "AirSafe.settings")
 
 application = get_wsgi_application()
 
+from AirQualityApp import views
+
 def update():
     next_date = datetime.date.today() + datetime.timedelta(days=1)
-    count = 0
 
     while 1:
         time = datetime.datetime.today().hour
