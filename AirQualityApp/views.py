@@ -53,8 +53,8 @@ def GetPastData(request):
     data = []
 
     for point in sql:
-        data.append({"pm": point.pm, "ozone": point.ozone})
-
+        data.append({"pm": point.pm, "ozone": point.ozone, "stamp":point.stamp.isoformat()})
+    
     return HttpResponse(json.dumps(data))
 
 def weekUpdate(zips, today):
