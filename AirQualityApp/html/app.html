@@ -50,19 +50,16 @@
                 debugger
                 var y=[];
                     $.ajax({
-
-                        'url' : 'http://localhost:8000/GetData',
+                        'url' : '/GetData',
                         'type' : 'GET',
                         'success' : function(data) {   
                             debugger   
                             x =JSON.parse(data);
                             for(var i=0;i<x.length;i++){
-                           y[i]=JSON.parse(x[i]).pm;
+                                y[i]=x[i].pm;
                             }
-                            alert(y);
-                            alert('Data: '+JSON.parse(data));
+                            
                             Highcharts.chart('container', {
-
                                 title: {
                                     text: 'Solar Employment Growth by Sector, 2010-2016'
                                 },
@@ -115,7 +112,8 @@
                         },
                         'error' : function(request,error)
                         {
-                            alert("Request: "+JSON.stringify(request));
+                            //alert("Request: "+JSON.stringify(request));
+                            aler(error)
                         }
                     });
                 </script>
@@ -127,15 +125,14 @@
                     var AQpm=[];
                     var AQozone=[];
                     $.ajax({
-
-                        'url' : 'http://localhost:8000/GetData',
+                        'url' : '/GetData',
                         'type' : 'GET',
                         'success' : function(data) {   
                             debugger   
                             x =JSON.parse(data);
                             for(var i=0;i<x.length;i++){
-                                AQpm[i]=JSON.parse(x[i]).pm;
-                                AQozone[i]=JSON.parse(x[i]).ozone;
+                                AQpm[i]=x[i].pm;
+                                AQozone[i]=x[i].ozone;
                             }
                             
                             
@@ -211,33 +208,33 @@
     <script>
 
         $("#search-button").on("click", function(event) {
-            var results = document.getElementById("result");
+            var results = document.getElementById("result").value;
             var search = "";
 
-            if (/[0-9]{5}/.matches(results)) {
+            if (results.match(/[0-9]{5}/)) {
                 search = "zip=" + results;
             }
-            else if (/[a-zA-Z]+,[a-zA-Z]+/.matches(results)) {
+            else if (results.match(/[a-zA-Z]+,[a-zA-Z]+/)) {
                 search = "city=" + results.split(",");
             }
-            else if (/[a-zA-Z]+/.matches(results)) {
+            else if (results.match(/[a-zA-Z]+/)) {
                 search = "city=" + results;
             }
             else {
                 alert("Please provide input in either of these formats: 1. city,state 2. city 3. zipcode");
                 return;
             }
-
+            
             var req = new XMLHttpRequest();
 
             req.onreadystatechange = function(event) {
                 
                 if(this.status == 200 && this.readyState == 4) {
-                    console.log(JSON.parse(this.responseText))
+                    console.log(this.responseText)
                 }
             }
             
-            url = "http://localhost:8000/current?" + search;
+            url = "/latest?" + search;
             req.open("GET", url);
             req.setRequestHeader("Content-Type", "application/json");
             req.send();
@@ -246,7 +243,6 @@
         /*
         $(document).ready(function(){
             $("a").on('click', function(event) {
-
                 if (this.hash !== "") {
                     event.preventDefault();
                     var hash = this.hash;
