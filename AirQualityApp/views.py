@@ -96,7 +96,32 @@ def weekUpdate(zips, today):
                 aq_object.save()
             else:
                 continue
-                
+
+def dayUpdate():
+    zips = models.Zip.objects.all()
+
+    for zip in zips:
+        aq = models.AQ.objects.filter(zipcode=zip.code).order_by("stamp")[0]
+
+        try:
+            new_aq = requests.get(current_url[0] + zip.code + current_url[1])
+
+            date = new_aq["DateObserved"].split("-")
+            aq.stamp = datetime.date(year=int(date[0]), month=int(date[1]), day=int(date[2]))
+
+            for theData in new_aq:
+                if theData["ParameterName"] == "PM2.5":
+                    aq.pm = theData["AQI"]
+                elif theData["ParameterName"] == "O3" or theData["ParameterName"] == "OZONE":
+                    aq.ozone = theData["AQI"]
+                else:
+                    continue
+
+            aq.save()      
+        except Exception as e:
+            print(str(e))
+            return
+
 def getCurrent(zipcode):
     try:
         data = json.loads(requests.get(current_url[0] + zipcode + current_url[1], timeout=10).text)
@@ -118,11 +143,11 @@ def getCurrent(zipcode):
             data["latitude"] = packet[0]["Latitude"]
             data["longitude"] = packet[0]["Longitude"]
             data["stamp"] = packet[0]["DateObserved"]
-            #data["stamp"] = datetime.date(year=int(aDate[0]), month=int(aDate[1]), day=int(aDate[2]))
+
             for theData in packet:
                 if theData["ParameterName"] == "PM2.5":
                     data["pm"] = theData["AQI"]
-                elif theData["ParameterName"] == "O3" or theData["ParameterName"] == "Ozone":
+                elif theData["ParameterName"] == "O3" or theData["ParameterName"] == "OZONE":
                     data["ozone"] = theData["AQI"]
                 else:
                     continue
