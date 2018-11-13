@@ -124,6 +124,7 @@
             <script>
                     var AQpm=[];
                     var AQozone=[];
+                    var array = ["11/05", "11/06", "11/07", "11/08", "11/09", "11/10", "11/11"];
                     $.ajax({
                         'url' : '/GetData',
                         'type' : 'GET',
@@ -147,12 +148,7 @@
         text: 'Data From March - May 2018'
     },
     xAxis: {
-        categories: [
-            'March',
-            'Apr',
-            'May',
-            
-        ],
+        categories: array,
         crosshair: true
     },
     yAxis: {

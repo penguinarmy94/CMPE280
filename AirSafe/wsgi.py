@@ -24,7 +24,7 @@ def update():
         time = datetime.datetime.today().hour
         day = datetime.date.today()
 
-        if time == 16:
+        if time == 7:
             if day == next_date:
                 views.dayUpdate()
                 next_date = day + datetime.timedelta(days=1)

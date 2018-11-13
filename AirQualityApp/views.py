@@ -27,13 +27,14 @@ def latest(request):
         return HttpResponse(json.dumps({"type": "not a request"}))
 
 def future(request):
+    dayUpdate()
     return HttpResponse("404")
 
 def updatePast(request):
     zips = models.Zip.objects.all()
     time = datetime.datetime.today().hour
 
-    if time >= 16:
+    if time >= 7:
         weekUpdate(zips, datetime.date.today() + datetime.timedelta(days=1))
     else:
         weekUpdate(zips, datetime.date.today())
