@@ -124,7 +124,7 @@
             <script>
                     var AQpm=[];
                     var AQozone=[];
-                    var array = ["11/05", "11/06", "11/07", "11/08", "11/09", "11/10", "11/11"];
+                    var AQstamp = [];
                     $.ajax({
                         'url' : '/GetData',
                         'type' : 'GET',
@@ -134,9 +134,10 @@
                             for(var i=0;i<x.length;i++){
                                 AQpm[i]=x[i].pm;
                                 AQozone[i]=x[i].ozone;
+                                AQstamp[i] =x[i].stamp;
                             }
                             
-                            
+                            console.log(AQstamp);
                 Highcharts.chart('pastData', {
     chart: {
         type: 'column'
@@ -145,10 +146,10 @@
         text: 'Air Pollution past data'
     },
     subtitle: {
-        text: 'Data From March - May 2018'
+        text: 'Data From past 7 days'
     },
     xAxis: {
-        categories: array,
+        categories:AQstamp,
         crosshair: true
     },
     yAxis: {
