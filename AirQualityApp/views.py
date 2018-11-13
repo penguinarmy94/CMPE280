@@ -15,11 +15,11 @@ def latest(request):
             zipcode = request.GET["zip"]
             code = models.Zip.objects.filter(code=zipcode)
             if code:
-                data = list(models.AQ.objects.filter(zipcode=zipcode).order_by('stamp').values())
+                data = list(models.AQ.objects.filter(zipcode=zipcode).values())
                 data[0]["stamp"] = data[0]["stamp"].isoformat()
                 return HttpResponse(json.dumps(data[0]))
             else:
-                data = getCurrent(zipcode)
+                data = getNewData(zipcode)
                 return HttpResponse(json.dumps(data))
         else:
             return HttpResponse(json.dumps({"type": "none"}))
@@ -34,10 +34,7 @@ def updatePast(request):
     zips = models.Zip.objects.all()
     time = datetime.datetime.today().hour
 
-    if time >= 7:
-        weekUpdate(zips, datetime.date.today() + datetime.timedelta(days=1))
-    else:
-        weekUpdate(zips, datetime.date.today())
+    weekUpdate(zips, datetime.date.today())
         
     return HttpResponse("success")
 
@@ -63,6 +60,8 @@ def weekUpdate(zips, today):
     for zip in zips:
         for day in range(8):
             date = today - datetime.timedelta(days=day)
+            print(date)
+            print(day)
             try:
                 aq = requests.get(past_url[0] + zip.code + past_url[1] + date.isoformat() + past_url[2], timeout = 10)    
             except:
@@ -103,36 +102,36 @@ def dayUpdate():
 
     for zip in zips:
         aq = models.AQ.objects.filter(zipcode=zip.code).order_by("stamp")[0]
+        print(aq.stamp)
 
         try:
-            new_aq = requests.get(current_url[0] + zip.code + current_url[1])
+            new_aq = json.loads(requests.get(current_url[0] + zip.code + current_url[1]).text)
+            if new_aq:
+                date = new_aq[0]["DateObserved"].split("-")
+                aq.stamp = datetime.date(year=int(date[0]), month=int(date[1]), day=int(date[2]))
 
-            date = new_aq["DateObserved"].split("-")
-            aq.stamp = datetime.date(year=int(date[0]), month=int(date[1]), day=int(date[2]))
-
-            for theData in new_aq:
-                if theData["ParameterName"] == "PM2.5":
-                    aq.pm = theData["AQI"]
-                elif theData["ParameterName"] == "O3" or theData["ParameterName"] == "OZONE":
-                    aq.ozone = theData["AQI"]
-                else:
-                    continue
-
-            aq.save()      
+                for theData in new_aq:
+                    if theData["ParameterName"] == "PM2.5":
+                        aq.pm = theData["AQI"]
+                    elif theData["ParameterName"] == "O3" or theData["ParameterName"] == "OZONE":
+                        aq.ozone = theData["AQI"]
+                    else:
+                        continue
+                aq.save()      
         except Exception as e:
             print(str(e))
             return
 
-def getCurrent(zipcode):
+def getNewData(zipcode):
     try:
         data = json.loads(requests.get(current_url[0] + zipcode + current_url[1], timeout=10).text)
         if data:
             data = models.Zip(code=zipcode)
             data.save()
-            if datetime.datetime.today().hour < 16:
-                weekUpdate([data], datetime.date.today())
+            if datetime.datetime.today().hour < 7:
+                weekUpdate([data], datetime.date.today() - datetime.timedelta(days=1))
             else:
-                weekUpdate([data], datetime.date.today() + datetime.timedelta(days=1))
+                weekUpdate([data], datetime.date.today())
             
             packet = json.loads(requests.get(current_url[0] + zipcode + current_url[1], timeout=10).text)
             data = {}
