@@ -25,7 +25,7 @@ SECRET_KEY = '#k4p1)-d)am8!)3hkin^a5s&p@1^xuu5%8%msu!^=qe@=v)=wq'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['airsafe-env.tqm8pqbcyp.us-west-1.elasticbeanstalk.com']
+ALLOWED_HOSTS = ['airsafe-env.tqm8pqbcyp.us-west-1.elasticbeanstalk.com','localhost']
 
 
 # Application definition
@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'AirQualityApp',
+    
 ]
 
 MIDDLEWARE = [
