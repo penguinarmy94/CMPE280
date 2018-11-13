@@ -58,15 +58,21 @@ def GetPastData(request):
 def weekUpdate(zips, today):
 
     for zip in zips:
-        for day in range(8):
+        for day in range(7):
             date = today - datetime.timedelta(days=day)
-            print(date)
-            print(day)
-            try:
-                aq = requests.get(past_url[0] + zip.code + past_url[1] + date.isoformat() + past_url[2], timeout = 10)    
-            except:
-                print("Error unloading")
-                continue
+
+            if date == today:
+                try:
+                    aq = requests.get(current_url[0] + zip.code + current_url[1], timeout = 10)    
+                except:
+                    print("Error unloading")
+                    continue
+            else:
+                try:
+                    aq = requests.get(past_url[0] + zip.code + past_url[1] + date.isoformat() + past_url[2], timeout = 10)    
+                except:
+                    print("Error unloading")
+                    continue
             
             aq = json.loads(aq.text)
             
@@ -128,10 +134,7 @@ def getNewData(zipcode):
         if data:
             data = models.Zip(code=zipcode)
             data.save()
-            if datetime.datetime.today().hour < 7:
-                weekUpdate([data], datetime.date.today() - datetime.timedelta(days=1))
-            else:
-                weekUpdate([data], datetime.date.today())
+            weekUpdate([data], datetime.date.today())
             
             packet = json.loads(requests.get(current_url[0] + zipcode + current_url[1], timeout=10).text)
             data = {}
