@@ -20,7 +20,8 @@ def latest(request):
                 return HttpResponse(json.dumps(data[0]))
             else:
                 data = getNewData(zipcode)
-                return HttpResponse(json.dumps(data))
+                data[0]["stamp"] = data[0]["stamp"].isoformat()
+                return HttpResponse(json.dumps(data[0]))
         else:
             return HttpResponse(json.dumps({"type": "none"}))
     else:
@@ -32,21 +33,12 @@ def future(request):
 
 def updatePast(request):
     zips = models.Zip.objects.all()
-    time = datetime.datetime.today().hour
 
     weekUpdate(zips, datetime.date.today())
         
     return HttpResponse("success")
 
 def GetPastData(request):
-    """
-    conn= pymysql.connect(host='airnow.cq2wcl14nou2.us-west-1.rds.amazonaws.com'
-    ,user='root',password='password',db='airsafe')
-    cur=conn.cursor()
-    sql = "SELECT JSON_OBJECT('pm',pm,'ozone',ozone) FROM airsafe.AQ;"
-    cur.execute(sql)
-    data = cur.fetchall()
-    """
     sql = models.AQ.objects.filter(zipcode="95112").order_by("stamp")
     data = []
 
@@ -129,13 +121,19 @@ def dayUpdate():
             return
 
 def getNewData(zipcode):
+
     try:
         data = json.loads(requests.get(current_url[0] + zipcode + current_url[1], timeout=10).text)
         if data:
             data = models.Zip(code=zipcode)
             data.save()
             weekUpdate([data], datetime.date.today())
+
+            data = list(models.AQ.objects.filter(zipcode=zipcode).values())
+
+            return data
             
+            """
             packet = json.loads(requests.get(current_url[0] + zipcode + current_url[1], timeout=10).text)
             data = {}
             data["id"] = 0
@@ -160,6 +158,7 @@ def getNewData(zipcode):
                 data["ozone"] = 0
 
             return data
+        """
 
         else:
             return {"type": "missing data"}
@@ -167,6 +166,8 @@ def getNewData(zipcode):
         print(str(e))
         try:
             code = models.Zip.objects.filter(code=zipcode).get()
+            code.delete()
+            code = models.AQ.objects.filter(code=zipcode).delete()
             code.delete()
             return [{"type": "connection error"}]
         except:
