@@ -28,8 +28,11 @@ def latest(request):
         return HttpResponse(json.dumps({"type": "not a request"}))
 
 def future(request):
-    dayUpdate()
-    return HttpResponse("404")
+    zips = models.Zip.objects.all()
+
+    historyUpdate(zips, datetime.date.today(), 60)
+
+    return HttpResponse("success")
 
 def updatePast(request):
     zips = models.Zip.objects.all()
@@ -71,6 +74,54 @@ def weekUpdate(zips, today):
             
             if aq:
                 aq_object = models.AQ()
+                aq_object.zipcode = zip.code
+                aq_object.city = aq[0]["ReportingArea"]
+                aq_object.country = "US"
+                aq_object.state = aq[0]["StateCode"]
+                aq_object.latitude = aq[0]["Latitude"]
+                aq_object.longitude = aq[0]["Longitude"]
+                aDate = aq[0]["DateObserved"].split("-")
+                aq_object.stamp = datetime.date(year=int(aDate[0]), month=int(aDate[1]), day=int(aDate[2]))
+                for data in aq:
+                    if data["ParameterName"] == "PM2.5":
+                        aq_object.pm = data["AQI"]
+                    elif data["ParameterName"] == "O3" or data["ParameterName"] == "OZONE":
+                        aq_object.ozone = data["AQI"]
+                    else:
+                        continue
+                if not aq_object.ozone:
+                    aq_object.ozone = 0
+                if not aq_object.pm:
+                    aq_object.pm = 0
+
+                aq_object.save()
+            else:
+                continue
+
+def historyUpdate(zips, today, amount):
+
+    for zip in zips:
+        for day in range(amount):
+            date = today - datetime.timedelta(days=day)
+
+            if date == today:
+                try:
+                    aq = requests.get(current_url[0] + zip.code + current_url[1], timeout = 10)    
+                except:
+                    print("Error unloading")
+                    continue
+            else:
+                try:
+                    aq = requests.get(past_url[0] + zip.code + past_url[1] + date.isoformat() + past_url[2], timeout = 10)    
+                except:
+                    print("Error unloading")
+                    continue
+            
+            aq = json.loads(aq.text)
+            
+            
+            if aq:
+                aq_object = models.History()
                 aq_object.zipcode = zip.code
                 aq_object.city = aq[0]["ReportingArea"]
                 aq_object.country = "US"

@@ -30,3 +30,18 @@ class Zip(models.Model):
 
     def __str__(self):
         return self.code
+
+
+class History(models.Model):
+    city = models.CharField(max_length=300)
+    state = models.CharField(max_length=300)
+    country = models.CharField(max_length=300)
+    zipcode = models.CharField(max_length=5, primary_key=True)
+    latitude = models.FloatField()
+    longitude = models.FloatField()
+    pm = models.FloatField()
+    ozone = models.FloatField()
+    stamp = models.DateField()
+
+    def __str__(self):
+        return str(self.pm)
