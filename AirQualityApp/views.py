@@ -2,12 +2,27 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from . import models
 import requests, json, pymysql, datetime
+from . import forecast
 
 current_url = ("http://www.airnowapi.org/aq/observation/zipCode/current/?format=application/json&zipCode=", "&distance=25&API_KEY=1BC71708-1C68-48AF-8742-7AEABACBE7F2")
 past_url = ("http://www.airnowapi.org/aq/observation/zipCode/historical/?format=application/json&zipCode=", "&date=", "T00-0000&distance=25&API_KEY=1BC71708-1C68-48AF-8742-7AEABACBE7F2")
 
 def index(request):
-    return render(request, 'app.html', {'cities': "cities", 'lat': -30, 'lng': -17.5})
+
+    try:
+        zips = models.Zip.objects.all()
+        points = []
+
+        for zip in zips:
+            aq = list(models.AQ.objects.filter(zipcode=zip.code).order_by('stamp').values())
+            data = aq[len(aq) - 1]
+            data["stamp"] = data["stamp"].isoformat()
+            points.append(data)
+        
+        return render(request, 'app.html', { "import": json.dumps(points)})
+    except Exception as e:
+        print(str(e))
+        return HttpResponse("Could not get the page requested")
 
 def latest(request):
     if request.method == "GET":
@@ -28,27 +43,52 @@ def latest(request):
         return HttpResponse(json.dumps({"type": "not a request"}))
 
 def future(request):
-    zips = models.Zip.objects.all()
+    #zips = models.Zip.objects.all()
 
-    historyUpdate(zips, datetime.date.today(), 60)
+    #historyUpdate(zips, datetime.date.today(), 20)
 
-    return HttpResponse("success")
+    #return HttpResponse("success")
+
+    
+    if request.method == "GET":
+        if request.GET["zip"]:
+            zipcode = request.GET["zip"]
+            while True:
+                code = models.Zip.objects.filter(code=zipcode)
+                if code:
+                    data = list(models.AQ.objects.filter(zipcode=zipcode).values('ozone'))
+                    results = forecast.predict(zipcode, data)
+                    print(results)
+                    return HttpResponse(json.dumps(results))
+        else:
+            return HttpResponse(json.dumps({"type": "none"}))
+    else:
+        return HttpResponse(json.dumps({"type": "not a request"}))
+    
 
 def updatePast(request):
     zips = models.Zip.objects.all()
 
     weekUpdate(zips, datetime.date.today())
-        
+
+       
     return HttpResponse("success")
 
 def GetPastData(request):
-    sql = models.AQ.objects.filter(zipcode="95112").order_by("stamp")
-    data = []
+    if request.method == "GET":
+        if request.GET["zip"]:
+            zipcode = request.GET["zip"]
 
-    for point in sql:
-        data.append({"pm": point.pm, "ozone": point.ozone, "stamp":point.stamp.isoformat()})
-    
-    return HttpResponse(json.dumps(data))
+            sql = models.AQ.objects.filter(zipcode=zipcode).order_by("stamp")
+
+            if sql:
+                data = []
+                for point in sql:
+                    data.append({"pm": point.pm, "ozone": point.ozone, "stamp":point.stamp.isoformat()})
+                
+                return HttpResponse(json.dumps(data))
+            else:
+                return HttpResponse(json.dumps({"type": "none"}))
 
 def weekUpdate(zips, today):
 
@@ -98,23 +138,26 @@ def weekUpdate(zips, today):
             else:
                 continue
 
-def historyUpdate(zips, today, amount):
+def historyUpdate(zips, start, amount):
+    today = datetime.date.today()
 
     for zip in zips:
         for day in range(amount):
-            date = today - datetime.timedelta(days=day)
+            date = start - datetime.timedelta(days=day)
 
             if date == today:
                 try:
                     aq = requests.get(current_url[0] + zip.code + current_url[1], timeout = 10)    
-                except:
+                except Exception as e:
                     print("Error unloading")
+                    print(e)
                     continue
             else:
                 try:
                     aq = requests.get(past_url[0] + zip.code + past_url[1] + date.isoformat() + past_url[2], timeout = 10)    
-                except:
+                except Exception as e:
                     print("Error unloading")
+                    print(e)
                     continue
             
             aq = json.loads(aq.text)
@@ -144,6 +187,8 @@ def historyUpdate(zips, today, amount):
 
                 aq_object.save()
             else:
+                print("Did not work")
+                print(aq)
                 continue
 
 def dayUpdate():
@@ -151,6 +196,7 @@ def dayUpdate():
 
     for zip in zips:
         aq = models.AQ.objects.filter(zipcode=zip.code).order_by("stamp")[0]
+        history = models.History()
         print(aq.stamp)
 
         try:
@@ -158,15 +204,26 @@ def dayUpdate():
             if new_aq:
                 date = new_aq[0]["DateObserved"].split("-")
                 aq.stamp = datetime.date(year=int(date[0]), month=int(date[1]), day=int(date[2]))
+                history.stamp = datetime.date(year=int(date[0]), month=int(date[1]), day=int(date[2]))
+                history.city = new_aq[0]["ReportingArea"]
+                history.country = "US"
+                history.latitude = new_aq[0]["Latitude"]
+                history.longitude = new_aq[0]["Longitude"]
+                history.state = new_aq[0]["StateCode"]
 
                 for theData in new_aq:
                     if theData["ParameterName"] == "PM2.5":
                         aq.pm = theData["AQI"]
+                        history.pm = theData["AQI"]
                     elif theData["ParameterName"] == "O3" or theData["ParameterName"] == "OZONE":
                         aq.ozone = theData["AQI"]
+                        history.ozone = theData["AQI"]
                     else:
                         continue
-                aq.save()      
+                
+                forecast.retrain(aq.pm, aq.ozone, datetime.date.today().isoformat(), aq.zipcode)
+                aq.save()
+                history.save()
         except Exception as e:
             print(str(e))
             return
@@ -179,38 +236,16 @@ def getNewData(zipcode):
             data = models.Zip(code=zipcode)
             data.save()
             weekUpdate([data], datetime.date.today())
+            historyUpdate([data], datetime.date.today(), 20)
+
+            historyData = models.History.objects.filter(zipcode=zicpde)
+
+            for obj in historyData:
+                forecast.retrain(obj.pm, obj.ozone, obj.stamp.isoformat(), obj.zipcode)
 
             data = list(models.AQ.objects.filter(zipcode=zipcode).values())
 
             return data
-            
-            """
-            packet = json.loads(requests.get(current_url[0] + zipcode + current_url[1], timeout=10).text)
-            data = {}
-            data["id"] = 0
-            data["zipcode"] = zipcode
-            data["city"] = packet[0]["ReportingArea"]
-            data["country"] = "US"
-            data["state"] = packet[0]["StateCode"]
-            data["latitude"] = packet[0]["Latitude"]
-            data["longitude"] = packet[0]["Longitude"]
-            data["stamp"] = packet[0]["DateObserved"]
-
-            for theData in packet:
-                if theData["ParameterName"] == "PM2.5":
-                    data["pm"] = theData["AQI"]
-                elif theData["ParameterName"] == "O3" or theData["ParameterName"] == "OZONE":
-                    data["ozone"] = theData["AQI"]
-                else:
-                    continue
-            if not data["pm"]:
-                data["pm"] = 0
-            if not data["ozone"]:
-                data["ozone"] = 0
-
-            return data
-        """
-
         else:
             return {"type": "missing data"}
     except Exception as e:
