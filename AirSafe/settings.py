@@ -63,7 +63,7 @@ ROOT_URLCONF = 'AirSafe.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['AirQualityApp/html'],
+        'DIRS': ['AirQualityApp/html', 'AirQualityApp/forecasting'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
