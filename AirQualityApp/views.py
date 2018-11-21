@@ -37,8 +37,8 @@ def latest(request):
                 data = getNewData(zipcode)
                 try:
                     data[0]["stamp"] = data[0]["stamp"].isoformat()
-                except Exception as e:
-                    print(str(e))
+                except:
+                    return HttpResponse(json.dumps(data))
 
                 return HttpResponse(json.dumps(data[0]))
         else:
