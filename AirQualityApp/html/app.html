@@ -6,9 +6,12 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://code.highcharts.com/highcharts.js"></script>
-<script src="https://code.highcharts.com/modules/series-label.js"></script>
-<script src="https://code.highcharts.com/modules/exporting.js"></script>
-<script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <script src="https://code.highcharts.com/modules/series-label.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
     <style>
         html, body { width: 100%; height: 600px; }
         #heading { width: 100%; height: 150px; }
@@ -55,150 +58,11 @@
             This is the air safe section
         </section>
         <section id="forecast">
-            This is the forecast section
             <div id="container"></div>
-            <script>
-                debugger
-                var y=[];
-                    $.ajax({
-                        'url' : '/GetData',
-                        'type' : 'GET',
-                        'success' : function(data) {
-                            debugger
-                            x =JSON.parse(data);
-                            for(var i=0;i<x.length;i++){
-                                y[i]=x[i].pm;
-                            }
-
-                            Highcharts.chart('container', {
-                                title: {
-                                    text: 'Solar Employment Growth by Sector, 2010-2016'
-                                },
-
-                                subtitle: {
-                                    text: 'Source: thesolarfoundation.com'
-                                },
-
-                                yAxis: {
-                                    title: {
-                                        text: 'Number of Employees'
-                                    }
-                                },
-                                legend: {
-                                    layout: 'vertical',
-                                    align: 'right',
-                                    verticalAlign: 'middle'
-                                },
-
-                                plotOptions: {
-                                    series: {
-                                        label: {
-                                            connectorAllowed: false
-                                        },
-                                        pointStart: 2010
-                                    }
-                                },
-
-                                series: [{
-                                    name: 'PM',
-                                    data: y
-                                }],
-
-                                responsive: {
-                                    rules: [{
-                                        condition: {
-                                            maxWidth: 500
-                                        },
-                                        chartOptions: {
-                                            legend: {
-                                                layout: 'horizontal',
-                                                align: 'center',
-                                                verticalAlign: 'bottom'
-                                            }
-                                        }
-                                    }]
-                                }
-
-                            });
-                        },
-                        'error' : function(request,error)
-                        {
-                            //alert("Request: "+JSON.stringify(request));
-                            aler(error)
-                        }
-                    });
-                </script>
         </section>
         <section id="past">
             This is the past data section
             <div id="pastData"></div>
-            <script>
-                    var AQpm=[];
-                    var AQozone=[];
-                    var AQstamp = [];
-                    $.ajax({
-                        'url' : '/GetData',
-                        'type' : 'GET',
-                        'success' : function(data) {
-                            debugger
-                            x =JSON.parse(data);
-                            for(var i=0;i<x.length;i++){
-                                AQpm[i]=x[i].pm;
-                                AQozone[i]=x[i].ozone;
-                                AQstamp[i] =x[i].stamp;
-                            }
-
-                            console.log(AQstamp);
-                Highcharts.chart('pastData', {
-    chart: {
-        type: 'column'
-    },
-    title: {
-        text: 'Air Pollution past data'
-    },
-    subtitle: {
-        text: 'Data From past 7 days'
-    },
-    xAxis: {
-        categories:AQstamp,
-        crosshair: true
-    },
-    yAxis: {
-        min: 0,
-        title: {
-            text: 'Aip Polutant (mm)'
-        }
-    },
-    tooltip: {
-        headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
-        pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
-            '<td style="padding:0"><b>{point.y:.1f} mm</b></td></tr>',
-        footerFormat: '</table>',
-        shared: true,
-        useHTML: true
-    },
-    plotOptions: {
-        column: {
-            pointPadding: 0.2,
-            borderWidth: 0
-        }
-    },
-    series: [{
-        name: 'PM',
-        data: AQpm
-
-    }, {
-        name: 'Ozone',
-        data: AQozone
-
-    }]
-});
-},
-'error' : function(request,error)
-{
-    alert("Request: "+JSON.stringify(request));
-}
-});</script>
         </section>
         <section id="about">
             This is the about us section
@@ -231,80 +95,28 @@
             	<p style="margin-top: 80px;"><h3>Thank you for subscription!</h3></p>
             	<button id="subscription_done" name="subscription_done">Done</button>
             </div>
-            <script>
-              $("#subscribing").on("click", function(event){
-                if($("#subscribe_email").val().trim() == "") {
-                  $("#subscribe_email").val("");
-                  alert("Please enter your email!");
-                }
-                else if($("#subscribe_zipcode").val().trim() == "") {
-                  $("#subscribe_zipcode").val("");
-                  alert("Please enter a zipcode!");
-                }
-                else {
-                  var email = $("#subscribe_email").val().trim();
-                  var req = new XMLHttpRequest();
-                  req.onreadystatechange = function(event) {
-                      if(this.status == 200 && this.readyState == 4) {
-                        if(this.responseText == "error") {
-                          alert("Please enter a valid email");
-                          $("#subscribe_email").val("");
-                          $("#subscribe_zipcode").val("");
-                        }
-                        else {
-                          verification_code = this.responseText;
-                          $("#subscribe_board").css("display", "none");
-                          $("#verify_email_board").css("display", "block");
-                        }
-                      }
-                  }
-                  var url = "/verifyEmail?email=" + email;
-                  req.open("get", url);
-                  req.send();
-                }
-              });
-              $("#submit_verfication_code").on("click", function(event){
-                if($("#verfication_code").val().trim() != verification_code) {
-                  $("#verfication_code").val("");
-                  alert("Verfication code is invalid!");
-                }
-                else {
-                  var email = $("#subscribe_email").val().trim();
-                  var zipcode = $("#subscribe_zipcode").val().trim();
-                  var req = new XMLHttpRequest();
-                  req.onreadystatechange = function(event) {
-                      if(this.status == 200 && this.readyState == 4) {
-                        $("#verify_email_board").css("display", "none");
-                        $("#subscribe_done_board").css("display", "block");
-                      }
-                  }
-                  var url = "/subscription?email=" + email + "&zipcode=" + zipcode;
-                  req.open("get", url);
-                  req.send();
-                }
-              });
-              $("#subscription_done").on("click", function(event){
-                verification_code = ""
-                $("#subscribe_email").val("");
-                $("#subscribe_zipcode").val("");
-                $("#verfication_code").val("");
-                $("#subscribe_done_board").css("display", "none");
-                $("#subscribe_board").css("display", "block");
-              });
-              </script>
         </section>
     </div>
     <div id="footer">
     </div>
 </div>
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
     <script>
 
+        $(window).on("load", function(event) {
+            $("#result").val("95112");
+            $("#search-button").click();
+            var importedData = JSON.stringify({{ import|safe }});
+            $("#air-safe").html(importedData);
+        });
+
+
         $("#search-button").on("click", function(event) {
-            var results = document.getElementById("result").value;
+            var results = $("#result").val();
             var search = "";
+
+            $("#result").val("");
+
+            console.log(results)
 
             if (results.match(/[0-9]{5}/)) {
                 search = "zip=" + results;
@@ -320,36 +132,217 @@
                 return;
             }
 
-            var req = new XMLHttpRequest();
+            $.ajax({
+                'url': "/latest?" + search,
+                'type': "GET",
+                'success': function(data) {
+                    console.log(data);
+                },
+                'error': function(error) {
 
-            req.onreadystatechange = function(event) {
-
-                if(this.status == 200 && this.readyState == 4) {
-                    console.log(this.responseText)
                 }
-            }
 
-            url = "/latest?" + search;
-            req.open("GET", url);
-            req.setRequestHeader("Content-Type", "application/json");
-            req.send();
-        })
-        //cross-browser smooth scrolling (w3schools reference)
-        /*
-        $(document).ready(function(){
-            $("a").on('click', function(event) {
-                if (this.hash !== "") {
-                    event.preventDefault();
-                    var hash = this.hash;
-                    $("#body-block").animate({
-                        scrollTop: $(hash).offset().top
-                        }, 800, function(){
-                        window.location.hash = hash;
-                    });
+            });
+            $.ajax({
+                'url': "/future?" + search,
+                'type': "GET",
+                'success': function(newData) {
+                    futureData(newData, results);
+                },
+                'error': function(error) {
+
                 }
             });
+            $.ajax({
+                'url' : '/GetData?' + search,
+                'type' : 'GET',
+                'success' : function(data) {
+                    pastData(data);
+                },
+                'error' : function(request,error)
+                {
+                    alert("Request: "+JSON.stringify(request));
+                }
+            });
+
         });
-        */
+
+        function futureData(data, location) {
+            var x =JSON.parse(data);
+            var y = [];
+
+            for(var i=0;i<x.length;i++){
+                y[i]= [Date.parse(x[i].stamp), Math.round(x[i].pm)];
+            }
+
+            Highcharts.chart('container', {
+                title: {
+                    text: 'Forecast for ' + location
+                },
+
+                subtitle: {
+                    text: 'Data for next ' + y.length
+                },
+
+                yAxis: {
+                    title: {
+                        text: 'PM2.5'
+                    }
+                },
+                legend: {
+                    layout: 'vertical',
+                    align: 'right',
+                    verticalAlign: 'middle'
+                },
+                xAxis: {
+                    type: "datetime",
+                    dateTimeLabelFormats: {
+                        format: "%Y-%m-%d"
+                    }
+                },
+                series: [{
+                    name: location,
+                    data: y
+                }],
+
+                responsive: {
+                    rules: [{
+                        condition: {
+                            maxWidth: 500
+                        },
+                        chartOptions: {
+                            legend: {
+                                layout: 'horizontal',
+                                align: 'center',
+                                verticalAlign: 'bottom'
+                            }
+                        }
+                    }]
+                }
+
+            });
+        }
+
+        function pastData(data) {
+            var AQpm=[];
+            var AQozone=[];
+            var AQstamp = [];
+
+            x =JSON.parse(data);
+
+            for(var i=0;i<x.length;i++){
+                AQpm[i]=x[i].pm;
+                AQozone[i]=x[i].ozone;
+                AQstamp[i] =x[i].stamp;
+            }
+
+             Highcharts.chart('pastData', {
+                chart: {
+                    type: 'column'
+                },
+                title: {
+                    text: 'Air Pollution past data'
+                },
+                subtitle: {
+                    text: 'Data From past 7 days'
+                },
+                xAxis: {
+                    categories:AQstamp,
+                    crosshair: true
+                },
+                yAxis: {
+                    min: 0,
+                    title: {
+                        text: 'Aip Polutant (mm)'
+                    }
+                },
+                tooltip: {
+                    headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                    pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                        '<td style="padding:0"><b>{point.y:.1f} mm</b></td></tr>',
+                    footerFormat: '</table>',
+                    shared: true,
+                    useHTML: true
+                },
+                plotOptions: {
+                    column: {
+                        pointPadding: 0.2,
+                        borderWidth: 0
+                    }
+                },
+                series: [{
+                    name: 'PM',
+                    data: AQpm
+
+                }, {
+                    name: 'Ozone',
+                    data: AQozone
+
+                }]
+            });
+        }
+
+        $("#subscribing").on("click", function(event){
+          if($("#subscribe_email").val().trim() == "") {
+            $("#subscribe_email").val("");
+            alert("Please enter your email!");
+          }
+          else if($("#subscribe_zipcode").val().trim() == "") {
+            $("#subscribe_zipcode").val("");
+            alert("Please enter a zipcode!");
+          }
+          else {
+            var email = $("#subscribe_email").val().trim();
+            var req = new XMLHttpRequest();
+            req.onreadystatechange = function(event) {
+                if(this.status == 200 && this.readyState == 4) {
+                  if(this.responseText == "error") {
+                    alert("Please enter a valid email");
+                    $("#subscribe_email").val("");
+                    $("#subscribe_zipcode").val("");
+                  }
+                  else {
+                    verification_code = this.responseText;
+                    $("#subscribe_board").css("display", "none");
+                    $("#verify_email_board").css("display", "block");
+                  }
+                }
+            }
+            var url = "/verifyEmail?email=" + email;
+            req.open("get", url);
+            req.send();
+          }
+        });
+
+        $("#submit_verfication_code").on("click", function(event){
+          if($("#verfication_code").val().trim() != verification_code) {
+            $("#verfication_code").val("");
+            alert("Verfication code is invalid!");
+          }
+          else {
+            var email = $("#subscribe_email").val().trim();
+            var zipcode = $("#subscribe_zipcode").val().trim();
+            var req = new XMLHttpRequest();
+            req.onreadystatechange = function(event) {
+                if(this.status == 200 && this.readyState == 4) {
+                  $("#verify_email_board").css("display", "none");
+                  $("#subscribe_done_board").css("display", "block");
+                }
+            }
+            var url = "/subscription?email=" + email + "&zipcode=" + zipcode;
+            req.open("get", url);
+            req.send();
+          }
+        });
+        
+        $("#subscription_done").on("click", function(event){
+          verification_code = ""
+          $("#subscribe_email").val("");
+          $("#subscribe_zipcode").val("");
+          $("#verfication_code").val("");
+          $("#subscribe_done_board").css("display", "none");
+          $("#subscribe_board").css("display", "block");
+        });
     </script>
 </body>
 </html>
