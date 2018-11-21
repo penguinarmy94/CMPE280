@@ -1,7 +1,8 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from . import models
-import requests, json, pymysql, datetime
+
+import requests, json, pymysql, datetime, smtplib, random
 from . import forecast
 
 current_url = ("http://www.airnowapi.org/aq/observation/zipCode/current/?format=application/json&zipCode=", "&distance=25&API_KEY=1BC71708-1C68-48AF-8742-7AEABACBE7F2")
@@ -18,7 +19,7 @@ def index(request):
             data = aq[len(aq) - 1]
             data["stamp"] = data["stamp"].isoformat()
             points.append(data)
-        
+
         return render(request, 'app.html', { "import": json.dumps(points)})
     except Exception as e:
         print(str(e))
@@ -49,7 +50,7 @@ def future(request):
 
     #return HttpResponse("success")
 
-    
+
     if request.method == "GET":
         if request.GET["zip"]:
             zipcode = request.GET["zip"]
@@ -64,14 +65,14 @@ def future(request):
             return HttpResponse(json.dumps({"type": "none"}))
     else:
         return HttpResponse(json.dumps({"type": "not a request"}))
-    
+
 
 def updatePast(request):
     zips = models.Zip.objects.all()
 
     weekUpdate(zips, datetime.date.today())
 
-       
+
     return HttpResponse("success")
 
 def GetPastData(request):
@@ -85,10 +86,57 @@ def GetPastData(request):
                 data = []
                 for point in sql:
                     data.append({"pm": point.pm, "ozone": point.ozone, "stamp":point.stamp.isoformat()})
-                
+
                 return HttpResponse(json.dumps(data))
             else:
                 return HttpResponse(json.dumps({"type": "none"}))
+
+def verifyEmail(request):
+    number = range(0, 10)
+    digits = random.sample(number, 6)
+    code = "".join(map(str, digits))
+    email = request.GET["email"]
+    sender = "cmpe280.airsafe@gmail.com"
+    receiver = email
+    message = """From: AirSafe <cmpe280.airsafe@gmail.com>
+To: """ + email + """
+Subject: AirSafe Test Email
+
+Thank you for subscribing AirSafe! Your verification code is """ + code + """.
+
+
+If you didn't subscribe our website, just ignore this email!
+Apology for our mistake!
+"""
+
+    try:
+        server = smtplib.SMTP("smtp.gmail.com", 587)
+        server.ehlo()
+        server.starttls()
+        server.ehlo()
+        server.login("cmpe280.airsafe@gmail.com", "airsafe280")
+        server.sendmail(sender, receiver, message)
+        server.close()
+        print ("Email sent successfully")
+        return HttpResponse(code)
+    except smtplib.SMTPException:
+        print ("Error: Unable to send the email")
+        return HttpResponse("error")
+
+def subscription(request):
+    email = request.GET["email"]
+    zipcode = request.GET["zipcode"]
+    user = models.User.objects.filter(email=email)
+    if user.exists():
+        old_user = user[0]
+        old_user.zipcode = zipcode
+        old_user.save()
+    else:
+        new_user = models.User()
+        new_user.email = email
+        new_user.zipcode = zipcode
+        new_user.save()
+    return HttpResponse("done")
 
 def weekUpdate(zips, today):
 
@@ -98,20 +146,20 @@ def weekUpdate(zips, today):
 
             if date == today:
                 try:
-                    aq = requests.get(current_url[0] + zip.code + current_url[1], timeout = 10)    
+                    aq = requests.get(current_url[0] + zip.code + current_url[1], timeout = 10)
                 except:
                     print("Error unloading")
                     continue
             else:
                 try:
-                    aq = requests.get(past_url[0] + zip.code + past_url[1] + date.isoformat() + past_url[2], timeout = 10)    
+                    aq = requests.get(past_url[0] + zip.code + past_url[1] + date.isoformat() + past_url[2], timeout = 10)
                 except:
                     print("Error unloading")
                     continue
-            
+
             aq = json.loads(aq.text)
-            
-            
+
+
             if aq:
                 aq_object = models.AQ()
                 aq_object.zipcode = zip.code
@@ -147,22 +195,22 @@ def historyUpdate(zips, start, amount):
 
             if date == today:
                 try:
-                    aq = requests.get(current_url[0] + zip.code + current_url[1], timeout = 10)    
+                    aq = requests.get(current_url[0] + zip.code + current_url[1], timeout = 10)
                 except Exception as e:
                     print("Error unloading")
                     print(e)
                     continue
             else:
                 try:
-                    aq = requests.get(past_url[0] + zip.code + past_url[1] + date.isoformat() + past_url[2], timeout = 10)    
+                    aq = requests.get(past_url[0] + zip.code + past_url[1] + date.isoformat() + past_url[2], timeout = 10)
                 except Exception as e:
                     print("Error unloading")
                     print(e)
                     continue
-            
+
             aq = json.loads(aq.text)
-            
-            
+
+
             if aq:
                 aq_object = models.History()
                 aq_object.zipcode = zip.code
@@ -220,7 +268,7 @@ def dayUpdate():
                         history.ozone = theData["AQI"]
                     else:
                         continue
-                
+
                 forecast.retrain(aq.pm, aq.ozone, datetime.date.today().isoformat(), aq.zipcode)
                 aq.save()
                 history.save()
@@ -257,8 +305,4 @@ def getNewData(zipcode):
             code.delete()
             return [{"type": "connection error"}]
         except:
-            return [{"type": "connection error"}]           
-                
-            
-
-
+            return [{"type": "connection error"}]

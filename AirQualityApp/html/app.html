@@ -20,6 +20,17 @@
         #footer { width: 100%; height: 40px; }
         section { width: 100%; height: 700px; border: 2px solid black; }
         .container-fluid { margin: auto; }
+        #subscribe_board, #verify_email_board, #subscribe_done_board
+        { width: 800px; height: 300px; margin-top: 60px; margin-left: auto;
+        	margin-right: auto; border-width: 1px; border-style: solid;
+        	text-align: center; padding-top: 10px; }
+        #verify_email_board, #subscribe_done_board { display: none; }
+        #subscribe_table { width: 500px; margin-left: 250px; }
+        #subscribe_table tr { height: 40px; }
+        #subscribe_email { width: 300px; }
+        #subscribe_zipcode { width: 100px; }
+        #subscribing, #verfication_code, #submit_verfication_code, #subscription_done
+        { margin-top: 30px; }
     </style>
 
 <body>
@@ -57,14 +68,40 @@
             This is the about us section
         </section>
         <section id="subscribe">
-            This is the subscribe section
+            <div id="subscribe_board">
+            	<p><h3>Subscribe to receive new air quality information every day!</h3>
+            	   (Note: To update subscribed zipcode, subscribe again with the same email and the new zipcode)
+            	</p>
+            	<table id="subscribe_table">
+            		<tr>
+            			<td>Email:</td>
+            			<td><input type="text" id="subscribe_email" name="subscribe_email"></td>
+            		</tr>
+            		<tr>
+            			<td>Zipcode:</td>
+            			<td><input type="text" id="subscribe_zipcode" name="subscribe_zipcode"></td>
+            		</tr>
+            	</table>
+            	<button id="subscribing" name="subscribing">Subscribe</button>
+            </div>
+            <div id="verify_email_board">
+            	<p style="margin-top: 50px;"><h3>Enter your verification code</h3>
+                 We have emailed you a verification code. Please check your email and enter the verfication code.
+              </p>
+            	<input type="text" id="verfication_code" name="verfication_code"></td>
+            	<button id="submit_verfication_code" name="submit_verfication_code">Submit</button>
+            </div>
+            <div id="subscribe_done_board">
+            	<p style="margin-top: 80px;"><h3>Thank you for subscription!</h3></p>
+            	<button id="subscription_done" name="subscription_done">Done</button>
+            </div>
         </section>
     </div>
     <div id="footer">
     </div>
 </div>
     <script>
-        
+
         $(window).on("load", function(event) {
             $("#result").val("95112");
             $("#search-button").click();
@@ -127,26 +164,26 @@
                     alert("Request: "+JSON.stringify(request));
                 }
             });
-            
+
         });
 
-        function futureData(data, location) {                      
+        function futureData(data, location) {
             var x =JSON.parse(data);
             var y = [];
 
             for(var i=0;i<x.length;i++){
                 y[i]= [Date.parse(x[i].stamp), Math.round(x[i].pm)];
             }
-            
+
             Highcharts.chart('container', {
                 title: {
                     text: 'Forecast for ' + location
                 },
-            
+
                 subtitle: {
                     text: 'Data for next ' + y.length
                 },
-            
+
                 yAxis: {
                     title: {
                         text: 'PM2.5'
@@ -162,12 +199,12 @@
                     dateTimeLabelFormats: {
                         format: "%Y-%m-%d"
                     }
-                },                   
+                },
                 series: [{
                     name: location,
                     data: y
                 }],
-            
+
                 responsive: {
                     rules: [{
                         condition: {
@@ -182,7 +219,7 @@
                         }
                     }]
                 }
-            
+
             });
         }
 
@@ -192,7 +229,7 @@
             var AQstamp = [];
 
             x =JSON.parse(data);
-            
+
             for(var i=0;i<x.length;i++){
                 AQpm[i]=x[i].pm;
                 AQozone[i]=x[i].ozone;
@@ -244,6 +281,68 @@
                 }]
             });
         }
+
+        $("#subscribing").on("click", function(event){
+          if($("#subscribe_email").val().trim() == "") {
+            $("#subscribe_email").val("");
+            alert("Please enter your email!");
+          }
+          else if($("#subscribe_zipcode").val().trim() == "") {
+            $("#subscribe_zipcode").val("");
+            alert("Please enter a zipcode!");
+          }
+          else {
+            var email = $("#subscribe_email").val().trim();
+            var req = new XMLHttpRequest();
+            req.onreadystatechange = function(event) {
+                if(this.status == 200 && this.readyState == 4) {
+                  if(this.responseText == "error") {
+                    alert("Please enter a valid email");
+                    $("#subscribe_email").val("");
+                    $("#subscribe_zipcode").val("");
+                  }
+                  else {
+                    verification_code = this.responseText;
+                    $("#subscribe_board").css("display", "none");
+                    $("#verify_email_board").css("display", "block");
+                  }
+                }
+            }
+            var url = "/verifyEmail?email=" + email;
+            req.open("get", url);
+            req.send();
+          }
+        });
+
+        $("#submit_verfication_code").on("click", function(event){
+          if($("#verfication_code").val().trim() != verification_code) {
+            $("#verfication_code").val("");
+            alert("Verfication code is invalid!");
+          }
+          else {
+            var email = $("#subscribe_email").val().trim();
+            var zipcode = $("#subscribe_zipcode").val().trim();
+            var req = new XMLHttpRequest();
+            req.onreadystatechange = function(event) {
+                if(this.status == 200 && this.readyState == 4) {
+                  $("#verify_email_board").css("display", "none");
+                  $("#subscribe_done_board").css("display", "block");
+                }
+            }
+            var url = "/subscription?email=" + email + "&zipcode=" + zipcode;
+            req.open("get", url);
+            req.send();
+          }
+        });
+        
+        $("#subscription_done").on("click", function(event){
+          verification_code = ""
+          $("#subscribe_email").val("");
+          $("#subscribe_zipcode").val("");
+          $("#verfication_code").val("");
+          $("#subscribe_done_board").css("display", "none");
+          $("#subscribe_board").css("display", "block");
+        });
     </script>
 </body>
 </html>
