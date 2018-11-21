@@ -13,10 +13,10 @@ from .train import date_calculation, train
 
 def predict(zip, ozones):
     try:        
-        model = joblib.load('model.joblib')
+        model = joblib.load('AirQualityApp/forecasting/model.joblib')
     except Exception as e:
         train()
-        model = joblib.load('model.joblib')
+        model = joblib.load('AirQualityApp/forecasting/model.joblib')
 
     tomorrow = datetime.date.today() + datetime.timedelta(days=1)
     forecast = []
@@ -39,9 +39,9 @@ def retrain(pm, ozone, date, zip):
     x = [[ozone, date_calculation(date), zip]]
     y = [[pm]]
 
-    model = joblib.load('model.joblib')
+    model = joblib.load('AirQualityApp/forecasting/model.joblib')
     model.fit(x,y)
-    joblib.dump(model, 'model.joblib')
+    joblib.dump(model, 'AirQualityApp/forecasting/model.joblib')
 
 
 

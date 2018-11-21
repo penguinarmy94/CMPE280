@@ -21,7 +21,7 @@ def date_calculation(date):
 
 
 def train():
-      pollution = pandas.read_csv('pollution.csv')
+      pollution = pandas.read_csv('AirQualityApp/forecasting/pollution.csv')
 
       Y = pollution['pm']
       X = pollution[['ozone', 'stamp', 'zipcode']]
@@ -49,4 +49,4 @@ def train():
       # Explained variance score: 1 is perfect prediction
       print('R-squared: %.2f' % r2_score(test_y, prediction))
 
-      joblib.dump(model, 'forecasting/model.joblib')
+      joblib.dump(model, 'AirQualityApp/forecasting/model.joblib')
