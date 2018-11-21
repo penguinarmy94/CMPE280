@@ -8,11 +8,16 @@ from sklearn.model_selection import train_test_split
 import requests, math
 from sklearn.externals import joblib
 import datetime
-from .train import date_calculation
+from .train import date_calculation, train
 
 
 def predict(zip, ozones):
-    model = joblib.load('model.joblib')
+    try:        
+        model = joblib.load('model.joblib')
+    except Exception as e:
+        train()
+        model = joblib.load('model.joblib')
+
     tomorrow = datetime.date.today() + datetime.timedelta(days=1)
     forecast = []
 
@@ -36,7 +41,7 @@ def retrain(pm, ozone, date, zip):
 
     model = joblib.load('model.joblib')
     model.fit(x,y)
-    joblib.dump(model, 'AirQualityApp/forecasting/model.joblib')
+    joblib.dump(model, 'model.joblib')
 
 
 
