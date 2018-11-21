@@ -238,7 +238,7 @@ def getNewData(zipcode):
             weekUpdate([data], datetime.date.today())
             historyUpdate([data], datetime.date.today(), 20)
 
-            historyData = models.History.objects.filter(zipcode=zicpde)
+            historyData = models.History.objects.filter(zipcode=zipcode)
 
             for obj in historyData:
                 forecast.retrain(obj.pm, obj.ozone, obj.stamp.isoformat(), obj.zipcode)
