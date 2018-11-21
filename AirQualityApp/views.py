@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from . import models
-import requests, json, pymysql, datetime
+import requests, json, pymysql, datetime, smtplib, random
 
 current_url = ("http://www.airnowapi.org/aq/observation/zipCode/current/?format=application/json&zipCode=", "&distance=25&API_KEY=1BC71708-1C68-48AF-8742-7AEABACBE7F2")
 past_url = ("http://www.airnowapi.org/aq/observation/zipCode/historical/?format=application/json&zipCode=", "&date=", "T00-0000&distance=25&API_KEY=1BC71708-1C68-48AF-8742-7AEABACBE7F2")
@@ -37,7 +37,7 @@ def updatePast(request):
         weekUpdate(zips, datetime.date.today() + datetime.timedelta(days=1))
     else:
         weekUpdate(zips, datetime.date.today())
-        
+
     return HttpResponse("success")
 
 def GetPastData(request):
@@ -54,8 +54,55 @@ def GetPastData(request):
 
     for point in sql:
         data.append({"pm": point.pm, "ozone": point.ozone, "stamp":point.stamp.isoformat()})
-    
+
     return HttpResponse(json.dumps(data))
+
+def verifyEmail(request):
+    number = range(0, 10)
+    digits = random.sample(number, 6)
+    code = "".join(map(str, digits))
+    email = request.GET["email"]
+    sender = "cmpe280.airsafe@gmail.com"
+    receiver = email
+    message = """From: AirSafe <cmpe280.airsafe@gmail.com>
+To: """ + email + """
+Subject: AirSafe Test Email
+
+Thank you for subscribing AirSafe! Your verification code is """ + code + """.
+
+
+If you didn't subscribe our website, just ignore this email!
+Apology for our mistake!
+"""
+
+    try:
+        server = smtplib.SMTP("smtp.gmail.com", 587)
+        server.ehlo()
+        server.starttls()
+        server.ehlo()
+        server.login("cmpe280.airsafe@gmail.com", "airsafe280")
+        server.sendmail(sender, receiver, message)
+        server.close()
+        print ("Email sent successfully")
+        return HttpResponse(code)
+    except smtplib.SMTPException:
+        print ("Error: Unable to send the email")
+        return HttpResponse("error")
+
+def subscription(request):
+    email = request.GET["email"]
+    zipcode = request.GET["zipcode"]
+    user = models.User.objects.filter(email=email)
+    if user.exists():
+        old_user = user[0]
+        old_user.zipcode = zipcode
+        old_user.save()
+    else:
+        new_user = models.User()
+        new_user.email = email
+        new_user.zipcode = zipcode
+        new_user.save()
+    return HttpResponse("done")
 
 def weekUpdate(zips, today):
 
@@ -63,14 +110,14 @@ def weekUpdate(zips, today):
         for day in range(8):
             date = today - datetime.timedelta(days=day)
             try:
-                aq = requests.get(past_url[0] + zip.code + past_url[1] + date.isoformat() + past_url[2], timeout = 10)    
+                aq = requests.get(past_url[0] + zip.code + past_url[1] + date.isoformat() + past_url[2], timeout = 10)
             except:
                 print("Error unloading")
                 continue
-            
+
             aq = json.loads(aq.text)
-            
-            
+
+
             if aq:
                 aq_object = models.AQ()
                 aq_object.zipcode = zip.code
@@ -117,7 +164,7 @@ def dayUpdate():
                 else:
                     continue
 
-            aq.save()      
+            aq.save()
         except Exception as e:
             print(str(e))
             return
@@ -132,7 +179,7 @@ def getCurrent(zipcode):
                 weekUpdate([data], datetime.date.today())
             else:
                 weekUpdate([data], datetime.date.today() + datetime.timedelta(days=1))
-            
+
             packet = json.loads(requests.get(current_url[0] + zipcode + current_url[1], timeout=10).text)
             data = {}
             data["id"] = 0
@@ -167,8 +214,4 @@ def getCurrent(zipcode):
             code.delete()
             return [{"type": "connection error"}]
         except:
-            return [{"type": "connection error"}]           
-                
-            
-
-
+            return [{"type": "connection error"}]
