@@ -294,7 +294,7 @@
           else {
             var email = $("#subscribe_email").val().trim();
             var zipcode = $("#subscribe_zipcode").val().trim();
-            if(!zipcode.match(/[0-9]{5}/)) {
+            if(!zipcode.match(/^\d{5}$/)) {
               alert("Please enter 5 digits zipcode");
             }
             else {
