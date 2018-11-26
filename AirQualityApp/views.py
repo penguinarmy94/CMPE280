@@ -104,7 +104,21 @@ def GetPastData(request):
             else:
                 return HttpResponse(json.dumps({"type": "none"}))
 
-def verifyEmail(request):
+def verifyEmailAndZipcode(request):
+    zipcode = request.GET["zipcode"]
+    code = models.Zip.objects.filter(code=zipcode)
+    if not code.exists():
+        new_code = json.loads(requests.get(current_url[0] + zipcode + current_url[1], timeout=10).text)
+        if new_code:
+            new_code = models.Zip(code=zipcode)
+            new_code.save()
+            weekUpdate([new_code], datetime.date.today())
+            historyUpdate([new_code], datetime.date.today(), 20)
+            historyData = models.History.objects.filter(zipcode=zipcode)
+            for obj in historyData:
+                forecast.retrain(obj.pm, obj.ozone, obj.stamp.isoformat(), obj.zipcode)
+        else:
+            return HttpResponse("no data")
     number = range(0, 10)
     digits = random.sample(number, 6)
     code = "".join(map(str, digits))
@@ -113,13 +127,12 @@ def verifyEmail(request):
     receiver = email
     message = """From: AirSafe <cmpe280.airsafe@gmail.com>
 To: """ + email + """
-Subject: AirSafe Test Email
+Subject: Verification Code
 
 Thank you for subscribing AirSafe! Your verification code is """ + code + """.
 
 
-If you didn't subscribe our website, just ignore this email!
-Apology for our mistake!
+If you didn't subscribe our website, just ignore this email! Apology for our mistake!
 """
 
     try:
@@ -144,11 +157,13 @@ def subscription(request):
         old_user = user[0]
         old_user.zipcode = zipcode
         old_user.save()
+        print ("Existed user updated into the DB successfully!")
     else:
         new_user = models.User()
         new_user.email = email
         new_user.zipcode = zipcode
         new_user.save()
+        print ("New user inserted into the DB successfully!")
     return HttpResponse("done")
 
 def weekUpdate(zips, today):

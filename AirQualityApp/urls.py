@@ -10,6 +10,6 @@ urlpatterns = [
     path('future', views.future, name='future'),
     path('load', views.updatePast, name='load'),
     path('GetData', views.GetPastData, name='GetData'),
-    path('verifyEmail', views.verifyEmail, name='verifyEmail'),
+    path('verifyEmailAndZipcode', views.verifyEmailAndZipcode, name='verifyEmailAndZipcode'),
     path('subscription', views.subscription, name='subscription')
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
