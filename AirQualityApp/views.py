@@ -36,7 +36,11 @@ def latest(request):
                 return HttpResponse(json.dumps(data[0]))
             else:
                 data = getNewData(zipcode)
-                data[0]["stamp"] = data[0]["stamp"].isoformat()
+                try:
+                    data[0]["stamp"] = data[0]["stamp"].isoformat()
+                except:
+                    return HttpResponse(json.dumps(data))
+
                 return HttpResponse(json.dumps(data[0]))
         else:
             return HttpResponse(json.dumps({"type": "none"}))
