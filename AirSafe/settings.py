@@ -46,7 +46,7 @@ INSTALLED_APPS = [
 
 CRONJOBS = [
 	# ('* * * * *', 'AirQualityApp.cron.send_email')
-	('0 7 * * *', 'AirQualityApp.cron.send_email')
+	('30 7 * * *', 'AirQualityApp.cron.send_email')
 ]
 
 MIDDLEWARE = [

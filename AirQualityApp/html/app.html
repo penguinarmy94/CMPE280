@@ -292,24 +292,33 @@
           }
           else {
             var email = $("#subscribe_email").val().trim();
-            var req = new XMLHttpRequest();
-            req.onreadystatechange = function(event) {
-                if(this.status == 200 && this.readyState == 4) {
-                  if(this.responseText == "error") {
-                    alert("Please enter a valid email");
-                    $("#subscribe_email").val("");
-                    $("#subscribe_zipcode").val("");
-                  }
-                  else {
-                    verification_code = this.responseText;
-                    $("#subscribe_board").css("display", "none");
-                    $("#verify_email_board").css("display", "block");
-                  }
-                }
+            var zipcode = $("#subscribe_zipcode").val().trim();
+            if(!zipcode.match(/^\d{5}$/)) {
+              alert("Please enter 5 digits zipcode");
             }
-            var url = "/verifyEmail?email=" + email;
-            req.open("get", url);
-            req.send();
+            else {
+              var req = new XMLHttpRequest();
+              req.onreadystatechange = function(event) {
+                  if(this.status == 200 && this.readyState == 4) {
+                    if(this.responseText == "error") {
+                      alert("Please enter a valid email");
+                      $("#subscribe_email").val("");
+                      $("#subscribe_zipcode").val("");
+                    }
+                    else if(this.responseText == "no data") {
+                      alert("Sorry, Zipcode " + zipcode + " currently has no available air quality data");
+                    }
+                    else {
+                      verification_code = this.responseText;
+                      $("#subscribe_board").css("display", "none");
+                      $("#verify_email_board").css("display", "block");
+                    }
+                  }
+              }
+              var url = "/verifyEmailAndZipcode?email=" + email + "&zipcode=" + zipcode;
+              req.open("get", url);
+              req.send();
+            }
           }
         });
 
@@ -333,7 +342,7 @@
             req.send();
           }
         });
-        
+
         $("#subscription_done").on("click", function(event){
           verification_code = ""
           $("#subscribe_email").val("");
