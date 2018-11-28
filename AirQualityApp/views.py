@@ -4,11 +4,9 @@ from . import models
 
 import requests, json, datetime, smtplib, random
 from . import forecast
-from uszipcode import SearchEngine
 
 current_url = ("http://www.airnowapi.org/aq/observation/zipCode/current/?format=application/json&zipCode=", "&distance=25&API_KEY=1BC71708-1C68-48AF-8742-7AEABACBE7F2")
 past_url = ("http://www.airnowapi.org/aq/observation/zipCode/historical/?format=application/json&zipCode=", "&date=", "T00-0000&distance=25&API_KEY=1BC71708-1C68-48AF-8742-7AEABACBE7F2")
-search = SearchEngine(simple_zipcode=False)
 
 def index(request):
 
