@@ -24,13 +24,12 @@
         #heading { z-index: 10; }
         #heading-frame { visibility: hidden; }
         #title { width: 100%; margin-left: 2%; }
-        #logo { width: 9%; display: inline-block; }
-        #title-text { font-size: 2vw; display: inline-block; margin-left: 2%; margin-top: 2%; }
-        #navigation, .navbar { width: 100%; }
-        .nav { border: 1px solid white; width: 20%; background: #5B76D4; color: white; font-size: 2vw; }
+        #logo { width: 5vw; height: 4vw; display: inline-block; }
+        #navigation { padding-left: 2%; width: 80%; display: inline-block; }
+        .nav { border: 0px solid white;  width: auto; background: #888FA8; color: white; font-weight: bold; font-size: 2vw; }
         #search { width: 80%; margin: auto; font-size: 1.5vw; }
         #search-form { width: 100%; margin: auto; }
-        #body_block { width: 100%; height: 100%; overflow: hidden; scroll-behavior: smooth; position: fixed; }
+        #body_block, #loading-block { width: 100%; height: 100%; overflow: hidden; scroll-behavior: smooth; position: fixed; }
         #footer { width: 100%; height: 40px; }
         section { width: 100%; height: 700px; border-bottom: 1px solid black; }
         .container-fluid { margin: auto; }
@@ -45,7 +44,7 @@
         #subscribe_zipcode { width: 100px; }
         #subscribing, #verfication_code, #submit_verfication_code, #subscription_done
         { margin-top: 30px; }
-        #loading-block { display: none; margin: auto; }
+        #loading-block { display: none; }
         span { margin: auto; font-weight: bold; }
         #container, #pastData { max-width: 99%; }
 
@@ -176,20 +175,22 @@
 
 <body>
     <div id="heading">
-            <div id="title"><img id="logo" src="{% static "logo.png" %}"><h3 id="title-text" >AirSafe: Quality Monitoring System</h3></div>
-        <div id="navigation">
-            <nav class="navbar navbar-inverse navbar-fixed-top">
-                <button class="nav" id="home_button" onclick="window.location.href='#air-safe'">Air Monitor</button>
-                <button class="nav" id="forecast_button" onclick="window.location.href='#forecast'">Forecast</button>
-                <button class="nav" id="past_data_button" onclick="window.location.href='#past'">Past Data</button>
-                <button class="nav" id="about_us_button" onclick="window.location.href='#about'">About Us</button>
-                <button class="nav" id="subscribe_button" onclick="window.location.href='#subscribe'">Subscribe</button>
-            </nav>
+        <div id="title">
+            <img id="logo" src="{% static "logo.png" %}"><!--<h3 id="title-text" >AirSafe: Quality Monitoring System</h3></div>-->
+            <div id="navigation">
+                <nav class="navbar navbar-inverse navbar-fixed-top">
+                    <button class="nav" id="home_button" onclick="window.location.href='#air-safe'">Air Monitor</button>
+                    <button class="nav" id="forecast_button" onclick="window.location.href='#forecast'">Forecast</button>
+                    <button class="nav" id="past_data_button" onclick="window.location.href='#past'">Past Data</button>
+                    <button class="nav" id="about_us_button" onclick="window.location.href='#about'">About Us</button>
+                    <button class="nav" id="subscribe_button" onclick="window.location.href='#subscribe'">Subscribe</button>
+                </nav>
+            </div>
         </div>
     </div>
     <div class="container-fluid">
     <div id="loading-block">
-        <img src="{% static "loading.gif" %}">
+        <img style="width: 100px; height: 100px; margin-top: 40vh; margin-left: 40vw; " src="{% static "loading.gif" %}">
     </div>
     <div id="body_block" data-spy="scroll" data-target=".navbar">
         <section id="air-safe">
@@ -426,14 +427,14 @@
             initMap1();
         });
 
-        $(".nav")[0].style.background = "#475CA7";
+        $(".nav")[0].style.color = "#475CA7";
 
         $(".nav").on("click", function(event) {
             var navs = $(".nav").each(function(index, value) {
-                value.style.background = "#5B76D4";
+                value.style.color = "white";
             });
 
-            $(this).css("background", "#475CA7");
+            $(this).css("color", "#475CA7");
         });
 
         $("#body_block").on("mouseenter", function(event) {
@@ -456,6 +457,7 @@
             $("#body_block").css("display", "block");
         });
 
+        
         $(".container-fluid").css("padding-top", $("#heading").css("height"));
 
         $(window).on("resize", function(event) {
