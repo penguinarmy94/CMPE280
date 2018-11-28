@@ -465,33 +465,32 @@
                     'url': "/latest?" + search,
                     'type': "GET",
                     'success': function(data) {
-                        console.log(data);
+                        $.ajax({
+                            'url': "/future?" + search,
+                            'type': "GET",
+                            'success': function(newData) {
+                                futureData(newData, zipcode);
+                            },
+                            'error': function(error) {
+
+                            }
+                        });
+                        $.ajax({
+                            'url' : '/GetData?' + search,
+                            'type' : 'GET',
+                            'success' : function(data) {
+                                pastData(data);
+                            },
+                            'error' : function(request,error)
+                            {
+                                alert("Request: "+JSON.stringify(request));
+                            }
+                        });
                     },
                     'error': function(error) {
 
                     }
 
-                });
-                $.ajax({
-                    'url': "/future?" + search,
-                    'type': "GET",
-                    'success': function(newData) {
-                        futureData(newData, zipcode);
-                    },
-                    'error': function(error) {
-
-                    }
-                });
-                $.ajax({
-                    'url' : '/GetData?' + search,
-                    'type' : 'GET',
-                    'success' : function(data) {
-                        pastData(data);
-                    },
-                    'error' : function(request,error)
-                    {
-                        alert("Request: "+JSON.stringify(request));
-                    }
                 });
 
         }

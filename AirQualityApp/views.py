@@ -362,15 +362,6 @@ def getZipcode(request):
 
     if not request.GET["zip"] == "":
         zipcode = request.GET["zip"]
-    elif not request.GET["state"] == "":
-        state = request.GET["state"]
-        city = request.GET["city"]
-        results = search.by_city_and_state(city,state)
-        zipcode = results[0].zipcode 
-    elif not request.GET["city"] == "":
-        city = request.GET["city"]
-        results = search.by_city_and_state(city)
-        zipcode = results[0].zipcode
     else:
         return None
     
