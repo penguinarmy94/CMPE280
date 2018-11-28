@@ -1,11 +1,12 @@
-<!DOCTYPE>
 <html lang="en">
     {% load static %}
     <title>AirSafe - Home</title>
-    <link rel="shortcut icon" type="image/png" href="{% static "logo.png" %}"/>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Security-Policy" content="script-src * data: https://ssl.gstatic.com 'unsafe-inline' 'unsafe-eval';">
+    <link rel="shortcut icon" type="image/png" href="{% static "logo.png" %}"/>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://code.highcharts.com/highcharts.js"></script>
@@ -15,11 +16,13 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-    <style>      
-        html { width: 100%; height: 100%; /*overflow: hidden;*/ }
-        body { width: 100%; height: auto; overflow: hidden; margin: auto; }
-        .container-fluid { padding-left: 0px; padding-right: 0px; }
-        #heading { margin: auto; position: fixed; z-index: 10; width: 99%; height: auto;  background: #888FA8; color: white; }
+    <style>
+         html { width: 100%; height: 100%; /*overflow: hidden;*/ }
+        body { width: 100%; height: auto; overflow: hidden; }
+        .container-fluid { padding-left: 0px; padding-right: 0px;}
+        #heading { margin: auto; position: fixed; width: 99%; height: auto;  background: #888FA8; color: white; }
+        #heading { z-index: 10; }
+        #heading-frame { visibility: hidden; }
         #title { width: 100%; margin-left: 2%; }
         #logo { width: 9%; display: inline-block; }
         #title-text { font-size: 2vw; display: inline-block; margin-left: 2%; margin-top: 2%; }
@@ -42,7 +45,7 @@
         #subscribe_zipcode { width: 100px; }
         #subscribing, #verfication_code, #submit_verfication_code, #subscription_done
         { margin-top: 30px; }
-        #loading-block { display: none; }
+        #loading-block { display: none; margin: auto; }
         span { margin: auto; font-weight: bold; }
         #container, #pastData { max-width: 99%; }
 
@@ -57,34 +60,167 @@
             box-shadow: insert 0 0 6px rgba(0, 0, 0, 0.1);
             background-color: #4285F4; 
         }
+
+        /*Jasmine StyleStart*/
+		.loader {
+		  border: 16px solid #f3f3f3;
+		  border-radius: 50%;
+		  border-top: 16px solid #3498db;
+		  width: 120px;
+		  height: 120px;
+		  -webkit-animation: spin 2s linear infinite; /* Safari */
+		  animation: spin 2s linear infinite;
+		}
+
+		/* Safari */
+		@-webkit-keyframes spin {
+		  0% { -webkit-transform: rotate(0deg); }
+		  100% { -webkit-transform: rotate(360deg); }
+		}
+
+		@keyframes spin {
+		  0% { transform: rotate(0deg); }
+		  100% { transform: rotate(360deg); }
+		}
+		/map {overflow: unset !important;}/
+		#map > :first-child{position: unset !important;}
+
+		
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+        height: 100%;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      #description {
+        font-family: Roboto;
+        font-size: 15px;
+        font-weight: 300;
+      }
+
+      #infowindow-content .title {
+        font-weight: bold;
+      }
+
+      #infowindow-content {
+        display: none;
+      }
+
+      #map #infowindow-content {
+        display: inline;
+      }
+
+      .pac-card {
+        margin: 10px 10px 0 0;
+        border-radius: 2px 0 0 2px;
+        box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        outline: none;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        background-color: #fff;
+        font-family: Roboto;
+      }
+
+      #pac-container {
+        padding-bottom: 12px;
+        margin-right: 12px;
+      }
+
+      .pac-controls {
+        display: inline-block;
+        padding: 5px 11px;
+      }
+
+      .pac-controls label {
+        font-family: Roboto;
+        font-size: 13px;
+        font-weight: 300;
+      }
+
+      #pac-input {
+        background-color: #fff;
+        font-family: Roboto;
+        font-size: 15px;
+        font-weight: 300;
+        margin-left: 12px;
+        padding: 0 11px 0 13px;
+        text-overflow: ellipsis;
+        width: 400px;
+      }
+
+      #pac-input:focus {
+        border-color: #4d90fe;
+      }
+
+      /*
+      #title {
+        color: #fff;
+        background-color: #4d90fe;
+        font-size: 25px;
+        font-weight: 500;
+        padding: 6px 12px;
+      }
+      */
+
+      #target {
+        width: 345px;
+      }
+		/*Jasmine StyleEnd*/
+
     </style>
 
 <body>
-    <div class="container-fluid">
     <div id="heading">
-        <div id="title"><img id="logo" src="{% static "logo.png" %}"><h3 id="title-text" >AirSafe: Quality Monitoring System</h3></div>
+            <div id="title"><img id="logo" src="{% static "logo.png" %}"><h3 id="title-text" >AirSafe: Quality Monitoring System</h3></div>
         <div id="navigation">
-            <nav class="navbar navbar-inverse navbar-fixed-top collapse.navbar-collapse" id="navbar" >
-                <button class="nav" id="home_button" onclick="window.location.href='#air-safe'"><span>Air Monitor</span></button>
-                <button class="nav" id="forecast_button" onclick="window.location.href='#forecast'"><span>Forecast<span></button>
-                <button class="nav" id="past_data_button" onclick="window.location.href='#past'"><span>Past Data</span></button>
-                <button class="nav" id="about_us_button" onclick="window.location.href='#about'"><span>About Us</span></button>
-                <button class="nav" id="subscribe_button" onclick="window.location.href='#subscribe'"><span>Subscribe</span></button>
+            <nav class="navbar navbar-inverse navbar-fixed-top">
+                <button class="nav" id="home_button" onclick="window.location.href='#air-safe'">Air Monitor</button>
+                <button class="nav" id="forecast_button" onclick="window.location.href='#forecast'">Forecast</button>
+                <button class="nav" id="past_data_button" onclick="window.location.href='#past'">Past Data</button>
+                <button class="nav" id="about_us_button" onclick="window.location.href='#about'">About Us</button>
+                <button class="nav" id="subscribe_button" onclick="window.location.href='#subscribe'">Subscribe</button>
             </nav>
         </div>
-        <div id="search">
-            <form id="search-form">
-                Search: <input id="result" type="text" name="search" style="width: 70%;" placeholder="Enter a city,state or zip code">
-                <input id="search-button" type="button" name="search-button" value="Search">
-            </form><br><br>
-        </div>
     </div>
+    <div class="container-fluid">
     <div id="loading-block">
         <img src="{% static "loading.gif" %}">
     </div>
-    <div id="body_block" class="scrollbar scrollbar-primary" data-spy="scroll" data-target=".navbar">
+    <div id="body_block" data-spy="scroll" data-target=".navbar">
         <section id="air-safe">
-            This is the air safe section
+        <div id="search">
+                <form id="search-form">
+                    <div class="pac-card" id="pac-card">
+                        <div>
+                        <div id="title">
+                            Countries
+                        </div>
+                        <div id="country-selector" class="pac-controls">
+                            <input type="radio" name="type" id="changecountry-usa">
+                            <label for="changecountry-usa">USA</label>
+    
+                            <input type="radio" name="type" id="changecountry-usa-and-uot" checked="checked">
+                            <label for="changecountry-usa-and-uot">USA and unincorporated organized territories</label>
+                        </div>
+                        </div>
+                        <div id="pac-container">
+                        <input id="pac-input" type="text"
+                            placeholder="Enter a location">
+                        </div>
+                    </div>
+                    <div id="infowindow-content">
+                        <img src="" width="16" height="16" id="place-icon">
+                        <span id="place-name"  class="title"></span><br>
+                        <span id="place-address"></span>
+                    </div>
+                </form>
+            </div>
+            <div id="map"></div>
         </section>
         <section id="forecast">
             <div id="container"></div>
@@ -128,14 +264,166 @@
     <div id="footer">
     </div>
 </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC8E-rdFsN24W5yP59JQmqlcu-_NU2DkUo&libraries=places" async defer></script>
     <script>
-        $("#body_block").css("top", $("#heading").css("height"));
-        $("#body_block").on("mouseenter", function(event) {
-            $(this).css("overflow-y", "auto");
+    /*Google Map Start*/
+    var map;
+	var importedData;
+	function initMap1() {
+	var icons = {
+				markedReg: {
+				name: 'markedReg'//,
+				//icon: 'GreenFlag2.png'
+				}
+          };
+    map = new google.maps.Map(document.getElementById('map'), {
+			  zoom: 4,
+			  center: new google.maps.LatLng(37.753038, -122.423198),
+			  mapTypeId: 'roadmap'
+			});
+	var card = document.getElementById('pac-card');
+	var input = document.getElementById('pac-input');
+	var countries = document.getElementById('country-selector');
+		  map.controls[google.maps.ControlPosition.TOP_RIGHT].push(card);
+
+        var autocomplete = new google.maps.places.Autocomplete(input);
+
+        // Set initial restrict to the greater list of countries.
+        autocomplete.setComponentRestrictions(
+            {'country': ['us', 'pr', 'vi', 'gu', 'mp']});
+
+        // Specify only the data fields that are needed.
+        autocomplete.setFields(
+            ['address_components', 'geometry', 'icon', 'name']);
+
+        var infowindow = new google.maps.InfoWindow();
+        var infowindowContent = document.getElementById('infowindow-content');
+        infowindow.setContent(infowindowContent);
+			var feature = [];
+            if(importedData){
+			feature = JSON.parse(importedData);
+			console.log(feature[0].id);
+					for (var i = 0; i < feature.length; i++) {
+				  var lati = feature[i].latitude;
+				  var longi = feature[i].longitude;
+				  var latLng = new google.maps.LatLng(lati,longi);
+				  var contentString = '<div id="content">'+
+					'<div id="siteNotice">'+
+					'</div>'+
+					'<h1 id="firstHeading" class="firstHeading">ID: '+feature[i].id+'</h1>'+
+					'<div id="bodyContent">'+
+					'<p>'+feature[i].city+'</p>'+
+					'<p>'+feature[i].state+'</p>'+
+					'<p>'+feature[i].country+'</p>'+
+					'<p>'+feature[i].zipcode+'</p>'+
+					'<p>'+feature[i].pm+'</p>'+
+					'<p>'+feature[i].ozone+'</p>'+
+					'</div>'+
+					'</div>';
+				  feature.forEach(function(feature) {
+				  var marker = new google.maps.Marker({
+					position: latLng,
+					map: map,
+					icon: icons['markedReg'].icon,
+					map: map,
+					content: contentString
+				  });
+
+				/*  var marker = new google.maps.Marker({
+					position: latLng,
+					map: map,
+					icon: icons[data.locations.location[i].type].icon,
+					map: map
+				  });*/
+				  var infowindow = new google.maps.InfoWindow();
+				  marker.addListener('click', function() {
+				  infowindow.setContent(this.content);
+				  infowindow.open(map, marker);
+				});
+        });
+		var marker = new google.maps.Marker({
+          map: map,
+          anchorPoint: new google.maps.Point(0, -29)
+        });
+    }
+		autocomplete.addListener('place_changed', function() {
+          infowindow.close();
+          marker.setVisible(false);
+          var place = autocomplete.getPlace();
+          if (!place.geometry) {
+            // User entered the name of a Place that was not suggested and
+            // pressed the Enter key, or the Place Details request failed.
+            //window.alert("No details available for input: '" + place.name + "'");
+            return;
+          }
+          
+          // If the place has a geometry, then present it on a map.
+          if (place.geometry.viewport) {
+            map.fitBounds(place.geometry.viewport);
+          } else {
+            map.setCenter(place.geometry.location);
+            map.setZoom(17);  // Why 17? Because it looks good.
+          }
+          marker.setPosition(place.geometry.location);
+          marker.setVisible(true);
+
+          var address = '';
+          if (place.address_components) {
+            address = [
+              (place.address_components[0] && place.address_components[0].short_name || ''),
+              (place.address_components[1] && place.address_components[1].short_name || ''),
+              (place.address_components[2] && place.address_components[2].short_name || '')
+            ].join(' ');
+            
+            for (var index = 0; index < place.address_components.length; index++) {
+                if (place.address_components[index].types[0] == "postal_code") {
+                    var zip = place.address_components[index].short_name;
+                    fetchAQData(zip);
+                    break;
+                }
+            }
+          }
+
+          infowindowContent.children['place-icon'].src = place.icon;
+          infowindowContent.children['place-name'].textContent = place.name;
+          infowindowContent.children['place-address'].textContent = address;
+          infowindow.open(map, marker);
         });
 
-        $("#body_block").on("mouseleave", function(event) {
-            $(this).css("overflow-y", "hidden");
+}
+
+        /*var map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 8,
+          center: {lat: -34.397, lng: 150.644}
+        });*/
+        /*var geocoder = new google.maps.Geocoder();
+
+        document.getElementById('submit').addEventListener('click', function() {
+          geocodeAddress(geocoder, map);
+        });*/
+      }
+
+      function geocodeAddress(geocoder, resultsMap) {
+        var address = document.getElementById('address').value;
+        geocoder.geocode({'address': address}, function(results, status) {
+          if (status === 'OK') {
+            resultsMap.setCenter(results[0].geometry.location);
+            var marker = new google.maps.Marker({
+              map: resultsMap,
+              position: results[0].geometry.location
+            });
+          } else {
+            alert('Geocode was not successful for the following reason: ' + status);
+          }
+        });
+      }
+      /*Google Map End*/
+        $(window).on("load", function(event) {
+            $("#result").val("95112");
+            $("#search-button").click();
+            importedData = JSON.stringify({{ import|safe }});
+            initMap1();
         });
 
         $(".nav")[0].style.background = "#475CA7";
@@ -148,83 +436,65 @@
             $(this).css("background", "#475CA7");
         });
 
-        $(window).on("load", function(event) {
-            $("#result").val("95112");
-            $("#search-button").click();
-            var importedData = JSON.stringify({{ import|safe }});
-            $("#air-safe").html(importedData);
+        $("#body_block").on("mouseenter", function(event) {
+            $(this).css("overflow-y", "auto");
         });
 
-        $(document).ajaxStart(function() {
+        $("#body_block").on("mouseleave", function(event) {
+            $(this).css("overflow-y", "hidden");
+        });
+
+         $(document).ajaxStart(function() {
             $("#body_block").css("display", "none");
+            $("#search").css("display", "none");
             $("#loading-block").css("display", "block");
         });
 
         $(document).ajaxStop(function() {
             $("#loading-block").css("display", "none");
+            $("#search").css("display", "block");
             $("#body_block").css("display", "block");
         });
 
-        $("#search-button").on("click", function(event) {
-            var results = $("#result").val();
-            var search = "";
+        fetchAQData("95112");
 
-            $("#result").val("");
+        function fetchAQData(zipcode) {  
+                var search = "zip=" + zipcode;
 
-            console.log(results)
+                $.ajax({
+                    'url': "/latest?" + search,
+                    'type': "GET",
+                    'success': function(data) {
+                        console.log(data);
+                    },
+                    'error': function(error) {
 
-            if (results.match(/[0-9]{5}/)) {
-                search = "zip=" + results + "&city=" + "&state=";
-            }
-            else if (results.match(/[a-zA-Z]+,[a-zA-Z]+/)) {
-                city_state = results.split(",");
-                search = "zip=&city=" + city_state[0] + "&state=" + city_state[1];
-            }
-            else if (results.match(/[a-zA-Z]+/)) {
-                search = "zip=&city=" + results + "&state=";
-            }
-            else {
-                alert("Please provide input in either of these formats: 1. city,state 2. city 3. zipcode");
-                return;
-            }
+                    }
 
-            $.ajax({
-                'url': "/latest?" + search,
-                'type': "GET",
-                'success': function(data) {
-                    console.log(data);
-                    parsedData = JSON.parse(data);
-                    search = "zip=" + parsedData.zipcode;
-                    console.log(search)
-                     $.ajax({
-                        'url': "/future?" + search,
-                        'type': "GET",
-                        'success': function(newData) {
-                            futureData(newData, results);
-                        },
-                        'error': function(error) {
+                });
+                $.ajax({
+                    'url': "/future?" + search,
+                    'type': "GET",
+                    'success': function(newData) {
+                        futureData(newData, zipcode);
+                    },
+                    'error': function(error) {
 
-                        }
-                    });
-                    $.ajax({
-                        'url' : '/GetData?' + search,
-                        'type' : 'GET',
-                        'success' : function(data) {
-                            pastData(data);
-                        },
-                        'error' : function(request,error)
-                        {
-                            alert("Request: "+JSON.stringify(request));
-                        }
-                    });
-                },
-                'error': function(error) {
+                    }
+                });
+                $.ajax({
+                    'url' : '/GetData?' + search,
+                    'type' : 'GET',
+                    'success' : function(data) {
+                        pastData(data);
+                    },
+                    'error' : function(request,error)
+                    {
+                        alert("Request: "+JSON.stringify(request));
+                    }
+                });
 
-                }
-
-            });
-
-        });
+        }
 
         function futureData(data, location) {
             var x =JSON.parse(data);
@@ -352,33 +622,24 @@
           }
           else {
             var email = $("#subscribe_email").val().trim();
-            var zipcode = $("#subscribe_zipcode").val().trim();
-            if(!zipcode.match(/^\d{5}$/)) {
-              alert("Please enter 5 digits zipcode");
-            }
-            else {
-              var req = new XMLHttpRequest();
-              req.onreadystatechange = function(event) {
-                  if(this.status == 200 && this.readyState == 4) {
-                    if(this.responseText == "error") {
-                      alert("Please enter a valid email");
-                      $("#subscribe_email").val("");
-                      $("#subscribe_zipcode").val("");
-                    }
-                    else if(this.responseText == "no data") {
-                      alert("Sorry, Zipcode " + zipcode + " currently has no available air quality data");
-                    }
-                    else {
-                      verification_code = this.responseText;
-                      $("#subscribe_board").css("display", "none");
-                      $("#verify_email_board").css("display", "block");
-                    }
+            var req = new XMLHttpRequest();
+            req.onreadystatechange = function(event) {
+                if(this.status == 200 && this.readyState == 4) {
+                  if(this.responseText == "error") {
+                    alert("Please enter a valid email");
+                    $("#subscribe_email").val("");
+                    $("#subscribe_zipcode").val("");
                   }
-              }
-              var url = "/verifyEmailAndZipcode?email=" + email + "&zipcode=" + zipcode;
-              req.open("get", url);
-              req.send();
+                  else {
+                    verification_code = this.responseText;
+                    $("#subscribe_board").css("display", "none");
+                    $("#verify_email_board").css("display", "block");
+                  }
+                }
             }
+            var url = "/verifyEmail?email=" + email;
+            req.open("get", url);
+            req.send();
           }
         });
 
@@ -402,7 +663,7 @@
             req.send();
           }
         });
-
+        
         $("#subscription_done").on("click", function(event){
           verification_code = ""
           $("#subscribe_email").val("");
