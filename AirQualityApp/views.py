@@ -4,9 +4,11 @@ from . import models
 
 import requests, json, datetime, smtplib, random
 from . import forecast
+from uszipcode import SearchEngine
 
 current_url = ("http://www.airnowapi.org/aq/observation/zipCode/current/?format=application/json&zipCode=", "&distance=25&API_KEY=1BC71708-1C68-48AF-8742-7AEABACBE7F2")
 past_url = ("http://www.airnowapi.org/aq/observation/zipCode/historical/?format=application/json&zipCode=", "&date=", "T00-0000&distance=25&API_KEY=1BC71708-1C68-48AF-8742-7AEABACBE7F2")
+search = SearchEngine(simple_zipcode=False)
 
 def index(request):
 
@@ -26,24 +28,26 @@ def index(request):
         return HttpResponse("Could not get the page requested")
 
 def latest(request):
-    if request.method == "GET":
-        if request.GET["zip"]:
-            zipcode = request.GET["zip"]
-            code = models.Zip.objects.filter(code=zipcode)
-            if code:
-                data = list(models.AQ.objects.filter(zipcode=zipcode).values())
-                data[0]["stamp"] = data[0]["stamp"].isoformat()
-                return HttpResponse(json.dumps(data[0]))
-            else:
-                data = getNewData(zipcode)
-                try:
-                    data[0]["stamp"] = data[0]["stamp"].isoformat()
-                except:
-                    return HttpResponse(json.dumps(data))
+    if request.method == "GET" and request.is_ajax():
+        zipcode = getZipcode(request)
 
-                return HttpResponse(json.dumps(data[0]))
-        else:
+        if not zipcode:
             return HttpResponse(json.dumps({"type": "none"}))
+        
+        code = models.Zip.objects.filter(code=zipcode)
+
+        if code:
+            data = list(models.AQ.objects.filter(zipcode=zipcode).values())
+            data[0]["stamp"] = data[0]["stamp"].isoformat()
+            return HttpResponse(json.dumps(data[0]))
+        else:
+            data = getNewData(zipcode)
+            try:
+                data[0]["stamp"] = data[0]["stamp"].isoformat()
+            except:
+                return HttpResponse(json.dumps(data))
+
+            return HttpResponse(json.dumps(data[0]))
     else:
         return HttpResponse(json.dumps({"type": "not a request"}))
 
@@ -54,28 +58,28 @@ def future(request):
 
     #return HttpResponse("success")
 
-    
     if request.method == "GET" and request.is_ajax():
-        if request.GET["zip"]:
-            zipcode = request.GET["zip"]
-            code = models.Zip.objects.filter(code=zipcode)
-            if code:
+        zipcode = getZipcode(request)
+
+        if not zipcode:
+            return HttpResponse(json.dumps({"type": "none"}))
+        
+        code = models.Zip.objects.filter(code=zipcode)
+        if code:
+            forecasted_data = list(models.Forecast.objects.filter(zipcode=zipcode).order_by("stamp").values())
+
+            if not forecasted_data:
+                data = list(models.AQ.objects.filter(zipcode=zipcode).values('ozone'))
+                results = forecast.predict(zipcode, data)
+                addForecasts(zipcode, results)
                 forecasted_data = list(models.Forecast.objects.filter(zipcode=zipcode).order_by("stamp").values())
 
-                if not forecasted_data:
-                    data = list(models.AQ.objects.filter(zipcode=zipcode).values('ozone'))
-                    results = forecast.predict(zipcode, data)
-                    addForecasts(zipcode, results)
-                    forecasted_data = list(models.Forecast.objects.filter(zipcode=zipcode).order_by("stamp").values())
+            for date in forecasted_data:
+                date["stamp"] = date["stamp"].isoformat()
 
-                for date in forecasted_data:
-                    date["stamp"] = date["stamp"].isoformat()
-
-                return HttpResponse(json.dumps(forecasted_data))
-            else:
-                return HttpResponse(json.dumps({"type": "none"}))
+            return HttpResponse(json.dumps(forecasted_data))
         else:
-            return HttpResponse(json.dumps({"type": "no request"}))
+            return HttpResponse(json.dumps({"type": "none"}))
     else:
         return redirect(index)
         
@@ -89,20 +93,25 @@ def updatePast(request):
     return HttpResponse("success")
 
 def GetPastData(request):
-    if request.method == "GET":
-        if request.GET["zip"]:
-            zipcode = request.GET["zip"]
+    if request.method == "GET" and request.is_ajax():
+        zipcode = getZipcode(request)
+        
+        if not zipcode:
+            return HttpResponse(json.dumps({"type": "none"}))
+        
+        sql = models.AQ.objects.filter(zipcode=zipcode).order_by("stamp")
 
-            sql = models.AQ.objects.filter(zipcode=zipcode).order_by("stamp")
+        if sql:
+            data = []
+            for point in sql:
+                data.append({"pm": point.pm, "ozone": point.ozone, "stamp": point.stamp.isoformat()})
 
-            if sql:
-                data = []
-                for point in sql:
-                    data.append({"pm": point.pm, "ozone": point.ozone, "stamp": point.stamp.isoformat()})
-
-                return HttpResponse(json.dumps(data))
-            else:
-                return HttpResponse(json.dumps({"type": "none"}))
+            return HttpResponse(json.dumps(data))
+        else:
+            return HttpResponse(json.dumps({"type": "none"}))
+    
+    else:
+        return redirect(index)
 
 def verifyEmailAndZipcode(request):
     zipcode = request.GET["zipcode"]
@@ -349,3 +358,22 @@ def addForecasts(zipcode, data):
             forecast.stamp = point["stamp"]
             forecast.zipcode = zipcode
             forecast.save()
+
+def getZipcode(request):
+    zipcode = ""
+
+    if not request.GET["zip"] == "":
+        zipcode = request.GET["zip"]
+    elif not request.GET["state"] == "":
+        state = request.GET["state"]
+        city = request.GET["city"]
+        results = search.by_city_and_state(city,state)
+        zipcode = results[0].zipcode 
+    elif not request.GET["city"] == "":
+        city = request.GET["city"]
+        results = search.by_city_and_state(city)
+        zipcode = results[0].zipcode
+    else:
+        return None
+    
+    return zipcode
