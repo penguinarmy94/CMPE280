@@ -27,6 +27,7 @@
         #heading { margin: auto; position: fixed; width: 100%; height: auto; background: #ffff; color: #23408C; }
         #heading { z-index: 10; }
         #heading-frame { visibility: hidden; }
+
         #title { width: 100%; margin: 0px; display:flex;display: inline-block;}
         #logo { height: 81px; width:141px;display: inline-block;}
         #title-text { font-size: 2rem; display: inline-block; padding: 28px; display: inline-block;}
@@ -43,6 +44,7 @@
     -ms-filter:blur(4px);
     -moz-filter:blur(4px);
     -webkit-filter:blur(4px);}
+
         #footer { width: 100%; height: 40px; }
 		#pastData, .container{margin-top:10%;}
         section { width: 100%; height: 80%; border-bottom: 1px solid black; }
@@ -55,6 +57,7 @@
         #subscribe_email { width: auto; }
         #subscribe_zipcode { width: auto; }
         #subscribing, #verfication_code, #submit_verfication_code, #subscription_done
+
         { margin: 30px; background:#F97016;color:white;border:none;height:50px;width:100px;border-radius:10px;}
 		#loadImg{ background: transparent;
 		 vertical-align: middle;}
@@ -67,6 +70,7 @@
     z-index: 1000;
     height: 31px;
    display: none; margin: auto; }
+
         span { margin: auto; font-weight: bold; }
         #container, #pastData { max-width: 99%; }
 
@@ -307,6 +311,7 @@ body {
 
 <body>
     <div id="heading">
+
             <div id="title" class="container navbar navbar-expand navbar-dark flex-column flex-md-row bd-navbar"><img id="logo" src="{% static "logo.png" %}">
 			<h3 id="title-text" >Air Quality Monitoring System</h3>
 			<!--<div class="navbar-nav-scroll">
@@ -343,11 +348,14 @@ body {
 			<hr>
            
 			
+
     </div>
 	
     <div class="container-fluid">
     <div id="loading-block">
+
         <img id="loadImg" src="{% static "loading.gif" %}">
+
     </div>
     <div id="body_block" class="bodyBlur" data-spy="scroll" data-target=".navbar">
 		
@@ -773,6 +781,7 @@ $('html body').keydown(function(e) {
             initMap1();
         });
 
+
         $(".nav")[0].style.background = "#F97016";
 
         $(".nav").on("click", function(event) {
@@ -781,6 +790,7 @@ $('html body').keydown(function(e) {
             });
 
             $(this).css("background", "#F97016");
+
         });
 
         $("#body_block").on("mouseenter", function(event) {
@@ -804,6 +814,7 @@ $('html body').keydown(function(e) {
 			$( "#body_block" ).removeClass( "bodyBlur" );
         });
 
+        
         $(".container-fluid").css("padding-top", $("#heading").css("height"));
 
         $(window).on("resize", function(event) {
