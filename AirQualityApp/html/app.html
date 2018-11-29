@@ -793,13 +793,17 @@ $('html body').keydown(function(e) {
 
         });
 
-        $("#body_block").on("mouseenter", function(event) {
+        $("#body_block").hover(function(event) {
             $(this).css("overflow-y", "auto");
-        });
-
-        $("#body_block").on("mouseleave", function(event) {
+        },function(event) {
             $(this).css("overflow-y", "hidden");
         });
+        
+        /*
+        $("#body_block").on("hover", function(event) {
+            $(this).css("overflow-y", "hidden");
+        });
+        */
 
          $(document).ajaxStart(function() {
             $("#body_block").css("display", "none");
