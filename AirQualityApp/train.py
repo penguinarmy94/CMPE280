@@ -49,4 +49,4 @@ def train():
       # Explained variance score: 1 is perfect prediction
       print('R-squared: %.2f' % r2_score(test_y, prediction))
 
-      joblib.dump(model, 'AirQualityApp/forecasting/model.joblib')
+      joblib.dump(model, 'model.joblib')

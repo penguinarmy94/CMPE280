@@ -1,8 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from . import models
 
-import requests, json, pymysql, datetime, smtplib, random
+import requests, json, datetime, smtplib, random
 from . import forecast
 
 current_url = ("http://www.airnowapi.org/aq/observation/zipCode/current/?format=application/json&zipCode=", "&distance=25&API_KEY=1BC71708-1C68-48AF-8742-7AEABACBE7F2")
@@ -26,24 +26,26 @@ def index(request):
         return HttpResponse("Could not get the page requested")
 
 def latest(request):
-    if request.method == "GET":
-        if request.GET["zip"]:
-            zipcode = request.GET["zip"]
-            code = models.Zip.objects.filter(code=zipcode)
-            if code:
-                data = list(models.AQ.objects.filter(zipcode=zipcode).values())
-                data[0]["stamp"] = data[0]["stamp"].isoformat()
-                return HttpResponse(json.dumps(data[0]))
-            else:
-                data = getNewData(zipcode)
-                try:
-                    data[0]["stamp"] = data[0]["stamp"].isoformat()
-                except:
-                    return HttpResponse(json.dumps(data))
+    if request.method == "GET" and request.is_ajax():
+        zipcode = getZipcode(request)
 
-                return HttpResponse(json.dumps(data[0]))
-        else:
+        if not zipcode:
             return HttpResponse(json.dumps({"type": "none"}))
+        
+        code = models.Zip.objects.filter(code=zipcode)
+
+        if code:
+            data = list(models.AQ.objects.filter(zipcode=zipcode).values())
+            data[0]["stamp"] = data[0]["stamp"].isoformat()
+            return HttpResponse(json.dumps(data[0]))
+        else:
+            data = getNewData(zipcode)
+            try:
+                data[0]["stamp"] = data[0]["stamp"].isoformat()
+            except:
+                return HttpResponse(json.dumps(data))
+
+            return HttpResponse(json.dumps(data[0]))
     else:
         return HttpResponse(json.dumps({"type": "not a request"}))
 
@@ -54,22 +56,31 @@ def future(request):
 
     #return HttpResponse("success")
 
+    if request.method == "GET" and request.is_ajax():
+        zipcode = getZipcode(request)
 
-    if request.method == "GET":
-        if request.GET["zip"]:
-            zipcode = request.GET["zip"]
-            while True:
-                code = models.Zip.objects.filter(code=zipcode)
-                if code:
-                    data = list(models.AQ.objects.filter(zipcode=zipcode).values('ozone'))
-                    results = forecast.predict(zipcode, data)
-                    print(results)
-                    return HttpResponse(json.dumps(results))
+        if not zipcode:
+            return HttpResponse(json.dumps({"type": "none"}))
+        
+        code = models.Zip.objects.filter(code=zipcode)
+        if code:
+            forecasted_data = list(models.Forecast.objects.filter(zipcode=zipcode).order_by("stamp").values())
+
+            if not forecasted_data:
+                data = list(models.AQ.objects.filter(zipcode=zipcode).values('ozone'))
+                results = forecast.predict(zipcode, data)
+                addForecasts(zipcode, results)
+                forecasted_data = list(models.Forecast.objects.filter(zipcode=zipcode).order_by("stamp").values())
+
+            for date in forecasted_data:
+                date["stamp"] = date["stamp"].isoformat()
+
+            return HttpResponse(json.dumps(forecasted_data))
         else:
             return HttpResponse(json.dumps({"type": "none"}))
     else:
-        return HttpResponse(json.dumps({"type": "not a request"}))
-
+        return redirect(index)
+        
 
 def updatePast(request):
     zips = models.Zip.objects.all()
@@ -80,20 +91,25 @@ def updatePast(request):
     return HttpResponse("success")
 
 def GetPastData(request):
-    if request.method == "GET":
-        if request.GET["zip"]:
-            zipcode = request.GET["zip"]
+    if request.method == "GET" and request.is_ajax():
+        zipcode = getZipcode(request)
+        
+        if not zipcode:
+            return HttpResponse(json.dumps({"type": "none"}))
+        
+        sql = models.AQ.objects.filter(zipcode=zipcode).order_by("stamp")
 
-            sql = models.AQ.objects.filter(zipcode=zipcode).order_by("stamp")
+        if sql:
+            data = []
+            for point in sql:
+                data.append({"pm": point.pm, "ozone": point.ozone, "stamp": point.stamp.isoformat()})
 
-            if sql:
-                data = []
-                for point in sql:
-                    data.append({"pm": point.pm, "ozone": point.ozone, "stamp":point.stamp.isoformat()})
-
-                return HttpResponse(json.dumps(data))
-            else:
-                return HttpResponse(json.dumps({"type": "none"}))
+            return HttpResponse(json.dumps(data))
+        else:
+            return HttpResponse(json.dumps({"type": "none"}))
+    
+    else:
+        return redirect(index)
 
 def verifyEmailAndZipcode(request):
     zipcode = request.GET["zipcode"]
@@ -247,6 +263,8 @@ def historyUpdate(zips, start, amount):
                         aq_object.ozone = data["AQI"]
                     else:
                         continue
+                if not aq_object.ozone and not aq_object.pm:
+                    continue
                 if not aq_object.ozone:
                     aq_object.ozone = 0
                 if not aq_object.pm:
@@ -277,6 +295,7 @@ def dayUpdate():
                 history.latitude = new_aq[0]["Latitude"]
                 history.longitude = new_aq[0]["Longitude"]
                 history.state = new_aq[0]["StateCode"]
+                history.zipcode = zip.code
 
                 for theData in new_aq:
                     if theData["ParameterName"] == "PM2.5":
@@ -288,7 +307,10 @@ def dayUpdate():
                     else:
                         continue
 
-                forecast.retrain(aq.pm, aq.ozone, datetime.date.today().isoformat(), aq.zipcode)
+                #forecast.retrain(aq.pm, aq.ozone, datetime.date.today().isoformat(), aq.zipcode)
+                models.Forecast.objects.filter(zipcode=zip.code).delete()
+                results = forecast.predict(zip.code, list(models.AQ.objects.filter(zipcode=zip.code).values("ozone")))
+                addForecasts(zip.code, results)
                 aq.save()
                 history.save()
         except Exception as e:
@@ -305,10 +327,8 @@ def getNewData(zipcode):
             weekUpdate([data], datetime.date.today())
             historyUpdate([data], datetime.date.today(), 20)
 
-            historyData = models.History.objects.filter(zipcode=zipcode)
-
-            for obj in historyData:
-                forecast.retrain(obj.pm, obj.ozone, obj.stamp.isoformat(), obj.zipcode)
+            #for obj in historyData:
+            #    forecast.retrain(obj.pm, obj.ozone, obj.stamp.isoformat(), obj.zipcode)
 
             data = list(models.AQ.objects.filter(zipcode=zipcode).values())
 
@@ -325,3 +345,24 @@ def getNewData(zipcode):
             return [{"type": "connection error"}]
         except:
             return [{"type": "connection error"}]
+
+def addForecasts(zipcode, data):
+    if len(data) <= 0:
+        return
+    else:
+        for point in data:
+            forecast = models.Forecast()
+            forecast.pm = point["pm"]
+            forecast.stamp = point["stamp"]
+            forecast.zipcode = zipcode
+            forecast.save()
+
+def getZipcode(request):
+    zipcode = ""
+
+    if not request.GET["zip"] == "":
+        zipcode = request.GET["zip"]
+    else:
+        return None
+    
+    return zipcode

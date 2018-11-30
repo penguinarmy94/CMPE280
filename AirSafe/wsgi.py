@@ -28,11 +28,10 @@ def update():
             if day == next_date:
                 views.dayUpdate()
                 next_date = day + datetime.timedelta(days=1)
-        """
-        if time > 0 and count%10000 == 0:
-            print("Day update in progress")
-        
-        count += 1"""
+            elif day + datetime.timedelta(days=1) < next_date:
+                day = next_date
+            else:
+                print("The day represented as today is: " + day.isoformat())
     
 update_thread = threading.Thread(target=update)
 

@@ -46,3 +46,14 @@ class History(models.Model):
 
     def __str__(self):
         return str(self.pm)
+
+
+class Forecast(models.Model):
+    id = models.BigAutoField(primary_key=True, unique=True)
+    zipcode = models.CharField(max_length=5)
+    pm = models.FloatField()
+    stamp = models.DateField()
+
+    def __str__(self):
+        return str(self.pm)
+
