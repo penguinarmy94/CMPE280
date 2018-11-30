@@ -799,11 +799,6 @@ $('html body').keydown(function(e) {
             $(this).css("overflow-y", "hidden");
         });
         
-        /*
-        $("#body_block").on("hover", function(event) {
-            $(this).css("overflow-y", "hidden");
-        });
-        */
 
          $(document).ajaxStart(function() {
             $("#body_block").css("display", "none");
@@ -994,6 +989,7 @@ $('html body').keydown(function(e) {
           }
           else {
             var email = $("#subscribe_email").val().trim();
+            var zipcode = $("#subscribe_zipcode").val().trim();
             var req = new XMLHttpRequest();
             req.onreadystatechange = function(event) {
                 if(this.status == 200 && this.readyState == 4) {
@@ -1009,7 +1005,7 @@ $('html body').keydown(function(e) {
                   }
                 }
             }
-            var url = "/verifyEmail?email=" + email;
+            var url = "/verifyEmailAndZipcode?email=" + email + "&zipcode=" + zipcode;
             req.open("get", url);
             req.send();
           }
