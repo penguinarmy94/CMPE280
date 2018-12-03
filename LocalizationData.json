@@ -18,7 +18,7 @@
       "Subscribe_thank": "Thank you for subscription!",
       "Done": "Done",
       "Forecast_for_highcharts": "Forecast for",
-      "Data_next_highCharts": "Data for next",
+      "Data_next_highcharts": "Data for next",
       "Air_past_highcharts": "Air Pollution past data",
       "Data_7days_highcharts": "Data From past 7 days",
       "Geocode_map_alert": "Geocode was not successful for the following reason:",
@@ -26,7 +26,8 @@
       "Email_alert": "Please enter your email!",
       "Zipcode_alert": "Please enter a zipcode!",
       "email_valid_alert": "Please enter a valid email",
-      "verification_code_alert": "Verfication code is invalid!"
+      "verification_code_alert": "Verfication code is invalid!",
+      "language": "Language:"
     },
     "SP": {
       "Air_main_title": "Sistema de monitoreo de calidad del aire",
@@ -47,7 +48,7 @@
       "Subscribe_thank": "Gracias por la suscripción!",
       "Done": "Hecho",
       "Forecast_for_highcharts": "Pronóstico para",
-      "Data_next_highCharts": "Datos para el proximo",
+      "Data_next_highcharts": "Datos para el proximo",
       "Air_past_highcharts": "Contaminación del aire datos pasados",
       "Data_7days_highcharts": "Datos de los últimos 7 días",
       "Geocode_map_alert": "Geocode no tuvo éxito por la siguiente razón:",
@@ -55,7 +56,8 @@
       "Email_alert": "¡Por favor introduzca su correo electrónico!",
       "Zipcode_alert": "¡Por favor introduzca un codigo postal!",
       "email_valid_alert": "Por favor introduzca una dirección de correo electrónico válida",
-      "verification_code_alert": "¡El código de verificación no es válido!"
+      "verification_code_alert": "¡El código de verificación no es válido!",
+      "language": "Idioma:"
     },
     "HI": {
       "Air_main_title": "वायु गुणवत्ता निगरानी प्रणाली",
@@ -76,7 +78,7 @@
       "Subscribe_thank": "सदस्यता के लिए धन्यवाद!",
       "Done": "किया हुआ",
       "Forecast_for_highcharts": "Forecast for",
-      "Data_next_highCharts": "अगले के लिए डेटा",
+      "Data_next_highcharts": "अगले के लिए डेटा",
       "Air_past_highcharts": "डेटा प्रदूषण पिछले डेटा",
       "Data_7days_highcharts": "पिछले 7 दिनों से डेटा",
       "Geocode_map_alert": "निम्नलिखित कारणों से जियोकोड सफल नहीं था:",
@@ -84,6 +86,7 @@
       "Email_alert": "अपना ईमेल दर्ज करें!",
       "Zipcode_alert": "कृपया एक ज़िप कोड दर्ज करें!",
       "email_valid_alert": "कृपया अपना मान्य ईमेल लिखें",
-      "verification_code_alert": "सत्यापन कोड अमान्य है!"
+      "verification_code_alert": "सत्यापन कोड अमान्य है!",
+      "language": " ाषा"
     }
   }

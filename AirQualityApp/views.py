@@ -22,14 +22,17 @@ def index(request):
         
         json_data = {}
         
-        with open("config.json") as config:
+
+        with open("LocalizationData.json", encoding="utf-8") as config:
             json_data = json.load(config)
 
         json_data["import"] = json.dumps(points)
         if "local" in request.GET:
             json_data = json_data[request.GET["local"]]
+            json_data["region"] = request.GET["local"]
         else:
             json_data = json_data["EN"]
+            json_data["region"] = "EN"
 
         return render(request, 'app.html', json_data)
     except Exception as e:
