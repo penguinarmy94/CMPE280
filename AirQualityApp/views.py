@@ -19,8 +19,23 @@ def index(request):
             data = aq[len(aq) - 1]
             data["stamp"] = data["stamp"].isoformat()
             points.append(data)
+        
+        json_data = {}
+        
 
-        return render(request, 'app.html', { "import": json.dumps(points)})
+        with open("LocalizationData.json", encoding="utf-8") as config:
+            json_data = json.load(config)
+
+        if "local" in request.GET:
+            json_data = json_data[request.GET["local"]]
+            json_data["region"] = request.GET["local"]
+        else:
+            json_data = json_data["EN"]
+            json_data["region"] = "EN"
+        
+        json_data["import"] = json.dumps(points)
+
+        return render(request, 'app.html', json_data)
     except Exception as e:
         print(str(e))
         return HttpResponse("Could not get the page requested")
