@@ -578,20 +578,20 @@ $('html body').keydown(function(e) {
                     'type': "GET",
                     'success': function(data) {
                         $.ajax({
-                            'url': "/future?" + search,
-                            'type': "GET",
-                            'success': function(newData) {
-                                futureData(newData, zipcode);
-                            },
-                            'error': function(error) {
-                                console.log("{{Request_alert}} "+JSON.stringify(error));
-                            }
-                        });
-                        $.ajax({
                             'url' : '/GetData?' + search,
                             'type' : 'GET',
                             'success' : function(data) {
                                 pastData(data, zipcode);
+                                $.ajax({
+                                    'url': "/future?" + search,
+                                    'type': "GET",
+                                    'success': function(newData) {
+                                        futureData(newData, zipcode);
+                                    },
+                                    'error': function(error) {
+                                        console.log("{{Request_alert}} "+JSON.stringify(error));
+                                    }
+                                });
                             },
                             'error' : function(request,error)
                             {
