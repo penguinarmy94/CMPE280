@@ -244,6 +244,13 @@ $('html body').keydown(function(e) {
 	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC8E-rdFsN24W5yP59JQmqlcu-_NU2DkUo&libraries=places&language={{region}}"  async defer></script>
     <script>
 
+   $(document).keypress(function(e){
+        if (e.which == 13){
+            e.preventDefault();
+            
+        }
+    });
+
     $('#localization').on("change", function(event) {
         window.location.href = "?local=" + $(this).val();
     });
@@ -257,10 +264,6 @@ $('html body').keydown(function(e) {
         else {
             value.selected = false;
         }
-    });
-
-    $('#localization').on("load", function(event) {
-        $(this).val("Español");
     });
 
 	$('.nav').on('click',function(){
@@ -514,14 +517,15 @@ $('html body').keydown(function(e) {
         });
       }
       /*Google Map End*/
+
+        
         $(window).on("load", function(event) {
-            $("#result").val("95112");
-            $("#search-button").click();
             importedData = JSON.stringify({{import|safe}});
 			importedDataSearch = JSON.parse(importedData);
 			console.log(importedDataSearch);
             initMap1();
         });
+        
 
 
         $(".nav")[0].style.background = "#F97016";
@@ -556,7 +560,7 @@ $('html body').keydown(function(e) {
                                 futureData(newData, zipcode);
                             },
                             'error': function(error) {
-
+                                console.log("{{Request_alert}} "+JSON.stringify(error));
                             }
                         });
                         $.ajax({
@@ -567,7 +571,7 @@ $('html body').keydown(function(e) {
                             },
                             'error' : function(request,error)
                             {
-                                alert("{{Request_alert}} "+JSON.stringify(request));
+                                console.log("{{Request_alert}} "+JSON.stringify(error));
                             }
                         });
                     },
