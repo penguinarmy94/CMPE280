@@ -218,6 +218,7 @@ body {
   .topnav a.icon {
     float: right;
     display: block;
+    background:#23408C;
   }
   .nav{width:unset;}
 }

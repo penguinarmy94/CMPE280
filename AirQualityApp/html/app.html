@@ -326,9 +326,11 @@ $('html body').keydown(function(e) {
 		var x = document.getElementById("myTopnav");
 		if (x.className === "topnav") {
 			x.className += " responsive";
+            $('a.icon').css('background','#F97016');
 		} else {
 			x.className = "topnav";
 			$(".container-fluid")[0].style.paddingTop = "0px";
+            $('a.icon').css('background','#23408C');
 		}
 	}
 
@@ -408,7 +410,6 @@ $('html body').keydown(function(e) {
 					  fillColor: '#FF0000',
 					  fillOpacity: 0.008,
 					  radius: 2500   // 10 miles in metres
-		
 					});
 					circle.bindTo('center', marker, 'position');
 					//}
