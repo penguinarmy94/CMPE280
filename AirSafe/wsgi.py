@@ -20,7 +20,7 @@ from AirQualityApp import views
 def update():
     next_date = datetime.date.today() + datetime.timedelta(days=1)
 
-    while 1:
+    while True:
         time = datetime.datetime.today().hour
         day = datetime.date.today()
 
@@ -32,6 +32,8 @@ def update():
                 day = next_date
             else:
                 print("The day represented as today is: " + day.isoformat())
+        else:
+            print("The current date and time is: " + day.isoformat() + " " + str(time))
     
 update_thread = threading.Thread(target=update)
 
