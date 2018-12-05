@@ -398,18 +398,18 @@ $('html body').keydown(function(e) {
 					content: contentString
 				  });
 				  // Add circle overlay and bind to marker
-				  //if(data.locations.location[i].type == "RetailLocation"){
-					/*var circle = new google.maps.Circle({
+				 // if(data.locations.location[i].type == "RetailLocation"){
+					var circle = new google.maps.Circle({
 					  map: map,
 					  strokeColor: '#FF0000',
 					  strokeOpacity: 0.8,
 					  strokeWeight: 0.5,
 					  fillColor: '#FF0000',
 					  fillOpacity: 0.008,
-					  radius: Math.sqrt(feature[i].ozone) * 100   // 10 miles in metres
-
+					  radius: 2500   // 10 miles in metres
+		
 					});
-					circle.bindTo('center', marker, 'position');*/
+					circle.bindTo('center', marker, 'position');
 					//}
 				/*  var marker = new google.maps.Marker({
 					position: latLng,
