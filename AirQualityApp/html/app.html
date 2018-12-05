@@ -61,7 +61,7 @@
                                 <div id="country-selector" class="pac-controls">
                                     <input type="radio" name="type" id="changecountry-usa">
                                     <label for="changecountry-usa">{{USA}}</label>
-            
+
                                     <input type="radio" name="type" id="changecountry-usa-and-uot" checked="checked">
                                     <label for="changecountry-usa-and-uot">{{USA_search_title}}</label>
                                 </div>
@@ -86,7 +86,7 @@
             <section id="past">
                 <div id="pastData"></div>
             </section>
-       <section id="about">         
+       <section id="about">
         <div class="card-carousel">
             <div class="my-card">
                 <div class="card">
@@ -271,7 +271,7 @@ $('html body').keydown(function(e) {
 	    $('.nav').removeClass('navClick');
 	    $(this).css('background','#F97016');
 	    $(this).addClass('navClick');
-        
+
         if ($(this).attr('id') == "home_button") {
             $("#air-safe").css("display", "block");
             $("#past").css("display", "none");
@@ -320,7 +320,7 @@ $('html body').keydown(function(e) {
 	$(this).css("background","#F97016");
 	else
 	$(this).css("background","#23408C");
-	
+
 });
 	function menuChange() {
 		var x = document.getElementById("myTopnav");
@@ -331,7 +331,7 @@ $('html body').keydown(function(e) {
 			$(".container-fluid")[0].style.paddingTop = "0px";
 		}
 	}
-	
+
 	</script>
 	<script>
     /*Google Map Start*/
@@ -407,7 +407,7 @@ $('html body').keydown(function(e) {
 					  fillColor: '#FF0000',
 					  fillOpacity: 0.008,
 					  radius: Math.sqrt(feature[i].ozone) * 100   // 10 miles in metres
-		
+
 					});
 					circle.bindTo('center', marker, 'position');*/
 					//}
@@ -438,7 +438,7 @@ $('html body').keydown(function(e) {
             //window.alert("No details available for input: '" + place.name + "'");
             return;
           }
-          
+
           // If the place has a geometry, then present it on a map.
           if (place.geometry.viewport) {
             map.fitBounds(place.geometry.viewport);
@@ -456,7 +456,7 @@ $('html body').keydown(function(e) {
               (place.address_components[1] && place.address_components[1].short_name || ''),
               (place.address_components[2] && place.address_components[2].short_name || '')
             ].join(' ');
-            
+
             for (var index = 0; index < place.address_components.length; index++) {
                 if (place.address_components[index].types[0] == "postal_code") {
                     var zip = place.address_components[index].short_name;
@@ -510,7 +510,7 @@ $('html body').keydown(function(e) {
 
 
         $(".nav")[0].style.background = "#F97016";
-        
+
         $(document).ajaxStart(function() {
             $("#body_block").css("display", "none");
             $("#search").css("display", "none");
@@ -527,7 +527,7 @@ $('html body').keydown(function(e) {
 
         fetchAQData("95112");
 
-        function fetchAQData(zipcode) {  
+        function fetchAQData(zipcode) {
                 var search = "zip=" + zipcode;
 
                 $.ajax({
@@ -723,8 +723,15 @@ $('html body').keydown(function(e) {
             var req = new XMLHttpRequest();
             req.onreadystatechange = function(event) {
                 if(this.status == 200 && this.readyState == 4) {
-                  $("#verify_email_board").css("display", "none");
-                  $("#subscribe_done_board").css("display", "block");
+                  if(this.responseText == "done") {
+                    $("#verify_email_board").css("display", "none");
+                    $("#subscribe_done_board").css("display", "block");
+                  }
+                  else {
+                    alert("Sorry, our system has some problems. Please subscribe again later!");
+                    $("#subscribe_board").css("display", "block");
+                    $("#verify_email_board").css("display", "none");
+                  }
                 }
             }
             var url = "/subscription?email=" + email + "&zipcode=" + zipcode;
@@ -732,7 +739,7 @@ $('html body').keydown(function(e) {
             req.send();
           }
         });
-        
+
         $("#subscription_done").on("click", function(event){
           verification_code = ""
           $("#subscribe_email").val("");

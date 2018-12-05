@@ -19,9 +19,9 @@ def index(request):
             data = aq[len(aq) - 1]
             data["stamp"] = data["stamp"].isoformat()
             points.append(data)
-        
+
         json_data = {}
-        
+
 
         with open("LocalizationData.json", encoding="utf-8") as config:
             json_data = json.load(config)
@@ -32,7 +32,7 @@ def index(request):
         else:
             json_data = json_data["EN"]
             json_data["region"] = "EN"
-        
+
         json_data["import"] = json.dumps(points)
 
         return render(request, 'app.html', json_data)
@@ -46,7 +46,7 @@ def latest(request):
 
         if not zipcode:
             return HttpResponse(json.dumps({"type": "none"}))
-        
+
         code = models.Zip.objects.filter(code=zipcode)
 
         if code:
@@ -76,7 +76,7 @@ def future(request):
 
         if not zipcode:
             return HttpResponse(json.dumps({"type": "none"}))
-        
+
         code = models.Zip.objects.filter(code=zipcode)
         if code:
             forecasted_data = list(models.Forecast.objects.filter(zipcode=zipcode).order_by("stamp").values())
@@ -95,7 +95,7 @@ def future(request):
             return HttpResponse(json.dumps({"type": "none"}))
     else:
         return redirect(index)
-        
+
 
 def updatePast(request):
     zips = models.Zip.objects.all()
@@ -108,10 +108,10 @@ def updatePast(request):
 def GetPastData(request):
     if request.method == "GET" and request.is_ajax():
         zipcode = getZipcode(request)
-        
+
         if not zipcode:
             return HttpResponse(json.dumps({"type": "none"}))
-        
+
         sql = models.AQ.objects.filter(zipcode=zipcode).order_by("stamp")
 
         if sql:
@@ -122,7 +122,7 @@ def GetPastData(request):
             return HttpResponse(json.dumps(data))
         else:
             return HttpResponse(json.dumps({"type": "none"}))
-    
+
     else:
         return redirect(index)
 
@@ -186,7 +186,31 @@ def subscription(request):
         new_user.zipcode = zipcode
         new_user.save()
         print ("New user inserted into the DB successfully!")
-    return HttpResponse("done")
+
+    aq = models.AQ.objects.filter(zipcode=zipcode).order_by("-stamp")[0]
+    sender = "cmpe280.airsafe@gmail.com"
+    receiver = email
+    message = """From: AirSafe <cmpe280.airsafe@gmail.com>
+To: """ + email + """
+Subject: AirSafe Test Email
+
+City: """ + aq.city + """    State: """ + aq.state + """
+Date: """ + str(aq.stamp) + """
+Ozone(O3) AQI: """ + str(aq.ozone) + """
+PM2.5 AQI: """ + str(aq.pm)
+    try:
+        server = smtplib.SMTP("smtp.gmail.com", 587)
+        server.ehlo()
+        server.starttls()
+        server.ehlo()
+        server.login("cmpe280.airsafe@gmail.com", "airsafe280")
+        server.sendmail(sender, receiver, message)
+        server.close()
+        print ("Email sent successfully")
+        return HttpResponse("done")
+    except smtplib.SMTPException:
+        print ("Error: Unable to send the email")
+        return HttpResponse("error")
 
 def weekUpdate(zips, today):
 
@@ -379,5 +403,5 @@ def getZipcode(request):
         zipcode = request.GET["zip"]
     else:
         return None
-    
+
     return zipcode
