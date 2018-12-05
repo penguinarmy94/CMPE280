@@ -334,6 +334,7 @@ $('html body').keydown(function(e) {
     /*Google Map Start*/
     var map;
 	var importedData;
+	var importedDataSearch;
 	function initMap1() {
 	var icons = {
 				markedReg: {
@@ -395,18 +396,18 @@ $('html body').keydown(function(e) {
 					content: contentString
 				  });
 				  // Add circle overlay and bind to marker
-				  //if(data.locations.location[i].type == "RetailLocation"){
-					/*var circle = new google.maps.Circle({
+				 // if(data.locations.location[i].type == "RetailLocation"){
+					var circle = new google.maps.Circle({
 					  map: map,
 					  strokeColor: '#FF0000',
 					  strokeOpacity: 0.8,
 					  strokeWeight: 0.5,
 					  fillColor: '#FF0000',
 					  fillOpacity: 0.008,
-					  radius: Math.sqrt(feature[i].ozone) * 100   // 10 miles in metres
-
+					  radius: 2500   // 10 miles in metres
+		
 					});
-					circle.bindTo('center', marker, 'position');*/
+					circle.bindTo('center', marker, 'position');
 					//}
 				/*  var marker = new google.maps.Marker({
 					position: latLng,
@@ -420,8 +421,10 @@ $('html body').keydown(function(e) {
 				  infowindow.open(map, marker);
 				});
         });
+		var contentString;
 		var marker = new google.maps.Marker({
           map: map,
+		  content: contentString,
           anchorPoint: new google.maps.Point(0, -29)
         });
     }
@@ -466,7 +469,20 @@ $('html body').keydown(function(e) {
 
           infowindowContent.children['place-icon'].src = place.icon;
           infowindowContent.children['place-name'].textContent = place.name;
-          infowindowContent.children['place-address'].textContent = address;
+		  //infowindowContent.children['place-address'].textContent = address;
+		  for(i=0;i<importedDataSearch.length;i++){
+		  if(zip !== "undefined")
+		   if(parseInt(zip) == parseInt(importedDataSearch[i].zipcode)){
+		   //infowindow.setContent("PM: "+importedDataSearch[i].pm+"/n"+"OZONE: "+importedDataSearch[i].ozone);
+		   infowindowContent.children['place-address'].textContent = "PM: "+importedDataSearch[i].pm+", OZONE: "+importedDataSearch[i].ozone;
+		   }
+		   else if(zip == "undefined"){
+		  // infowindow.setContent("No data found for PM and OZONE");
+		  infowindowContent.children['place-address'].textContent = "No Data Found for PM and OZONE"
+		   }
+		  }
+		 
+         
           infowindow.open(map, marker);
         });
 
@@ -502,6 +518,8 @@ $('html body').keydown(function(e) {
             $("#result").val("95112");
             $("#search-button").click();
             importedData = JSON.stringify({{import|safe}});
+			importedDataSearch = JSON.parse(importedData);
+			console.log(importedDataSearch);
             initMap1();
         });
 
