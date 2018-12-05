@@ -40,32 +40,6 @@
                     <a href="javascript:void(0);" class="icon" onclick="menuChange()"><i class="fa fa-bars"></i></a>
                 </nav>
             </div>
-            <div id="search">
-                <form id="search-form">
-                    <div class="pac-card" id="pac-card">
-                        <div>
-                            <label class="searchLabel">{{Countries}}</label>
-                            <br>
-                            <div id="country-selector" class="pac-controls">
-                                <input type="radio" name="type" id="changecountry-usa">
-                                <label for="changecountry-usa">{{USA}}</label>
-
-                                <input type="radio" name="type" id="changecountry-usa-and-uot" checked="checked">
-                                <label for="changecountry-usa-and-uot">{{USA_search_title}}</label>
-                            </div>
-                        </div>
-                        <div id="pac-container">
-                        <input id="pac-input" type="text"
-                            placeholder="Enter a location">
-                        </div>
-                    </div>
-                    <div id="infowindow-content">
-                        <img src="" width="16" height="16" id="place-icon">
-                        <span id="place-name"  class="title"></span><br>
-                        <span id="place-address"></span>
-                    </div>
-                </form>
-            </div>
         </div>
     </div>
     <span itemscope itemtype="http://schema.org/Organization">
@@ -78,6 +52,32 @@
         </div>
         <div id="body_block">
             <section id="air-safe">
+                <div id="search">
+                    <form id="search-form">
+                        <div class="pac-card" id="pac-card">
+                            <div>
+                                <label class="searchLabel">{{Countries}}</label>
+                                <br>
+                                <div id="country-selector" class="pac-controls">
+                                    <input type="radio" name="type" id="changecountry-usa">
+                                    <label for="changecountry-usa">{{USA}}</label>
+
+                                    <input type="radio" name="type" id="changecountry-usa-and-uot" checked="checked">
+                                    <label for="changecountry-usa-and-uot">{{USA_search_title}}</label>
+                                </div>
+                            </div>
+                            <div id="pac-container">
+                            <input id="pac-input" type="text"
+                                placeholder="Enter a location">
+                            </div>
+                        </div>
+                        <div id="infowindow-content">
+                            <img src="" width="16" height="16" id="place-icon">
+                            <span id="place-name"  class="title"></span><br>
+                            <span id="place-address"></span>
+                        </div>
+                    </form>
+                </div>
                 <div id="map"></div>
             </section>
             <section id="forecast">
@@ -228,6 +228,9 @@ $('html body').keydown(function(e) {
             <div id="subscribe_done_board">
             	<p style="margin-top: 80px;"><h3>{{Subscribe_thank}}</h3></p>
             	<button id="subscription_done" class="btn btn-primary btn-lg" name="subscription_done">Done</button>
+                </div>
+                </div>
+                </div>
             </div>
         </section>
     </div>
@@ -244,13 +247,6 @@ $('html body').keydown(function(e) {
 	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC8E-rdFsN24W5yP59JQmqlcu-_NU2DkUo&libraries=places&language={{region}}"  async defer></script>
     <script>
 
-   $(document).keypress(function(e){
-        if (e.which == 13){
-            e.preventDefault();
-
-        }
-    });
-
     $('#localization').on("change", function(event) {
         window.location.href = "?local=" + $(this).val();
     });
@@ -264,6 +260,10 @@ $('html body').keydown(function(e) {
         else {
             value.selected = false;
         }
+    });
+
+    $('#localization').on("load", function(event) {
+        $(this).val("Español");
     });
 
 	$('.nav').on('click',function(){
@@ -326,11 +326,9 @@ $('html body').keydown(function(e) {
 		var x = document.getElementById("myTopnav");
 		if (x.className === "topnav") {
 			x.className += " responsive";
-            $('a.icon').css('background','#F97016');
 		} else {
 			x.className = "topnav";
 			$(".container-fluid")[0].style.paddingTop = "0px";
-            $('a.icon').css('background','#23408C');
 		}
 	}
 
@@ -379,27 +377,6 @@ $('html body').keydown(function(e) {
 				  var lati = feature[i].latitude;
 				  var longi = feature[i].longitude;
 				  var latLng = new google.maps.LatLng(lati,longi);
-
-                  var circ_color = "";
-
-                  if (feature[i].pm >= 301) {
-                        circ_color = "#170000";
-                     }
-                     else if (feature[i].pm < 301 && feature[i].pm >= 201) {
-                        circ_color = "#FFFF00";
-                     }
-                     else if (feature[i].pm < 201 && feature[i].pm >= 151) {
-                        circ_color = "#FF0000";
-                     }
-                     else if (feature[i].pm < 151 && feature[i].pm >= 101) {
-                        circ_color = "#FFA500";
-                     }
-                     else if (feature[i].pm < 101 && feature[i].pm >= 51) {
-                        circ_color = "#FFFF00";
-                     }
-                     else {
-                        circ_color = "#00FF00";
-                     }
 				  var contentString = '<div id="content">'+
 					'<div id="siteNotice">'+
 					'</div>'+
@@ -423,13 +400,12 @@ $('html body').keydown(function(e) {
 				  });
 				  // Add circle overlay and bind to marker
 				 // if(data.locations.location[i].type == "RetailLocation"){
-        
 					var circle = new google.maps.Circle({
 					  map: map,
-					  strokeColor: circ_color,
+					  strokeColor: '#FF0000',
 					  strokeOpacity: 0.8,
 					  strokeWeight: 0.5,
-					  fillColor: circ_color,
+					  fillColor: '#FF0000',
 					  fillOpacity: 0.008,
 					  radius: 2500   // 10 miles in metres
 		
@@ -448,10 +424,8 @@ $('html body').keydown(function(e) {
 				  infowindow.open(map, marker);
 				});
         });
-		var contentString;
 		var marker = new google.maps.Marker({
           map: map,
-		  content: contentString,
           anchorPoint: new google.maps.Point(0, -29)
         });
     }
@@ -493,23 +467,21 @@ $('html body').keydown(function(e) {
                 }
             }
           }
+		   infowindowContent.children['place-icon'].src = place.icon;
+          infowindowContent.children['place-name'].textContent = place.name;	
+		  for(var i=0;i<importedDataSearch.length;i++){
+			if(zip !== "undefined"){
+				if(parseInt(zip) == parseInt(importedDataSearch[i].zipcode)){
+					 infowindowContent.children['place-address'].textContent = "PM: "+importedDataSearch[i].pm+", OZONE:"+importedDataSearch[i].ozone;
+				}
+			}
+			else if(zip == "undefined"){
+				infowindowContent.children['place-address'].textContent = "No Data found for PM and OZONE"
+			}
 
-          infowindowContent.children['place-icon'].src = place.icon;
-          infowindowContent.children['place-name'].textContent = place.name;
-		  //infowindowContent.children['place-address'].textContent = address;
-		  for(i=0;i<importedDataSearch.length;i++){
-		  if(zip !== "undefined")
-		   if(parseInt(zip) == parseInt(importedDataSearch[i].zipcode)){
-		   //infowindow.setContent("PM: "+importedDataSearch[i].pm+"/n"+"OZONE: "+importedDataSearch[i].ozone);
-		   infowindowContent.children['place-address'].textContent = "PM: "+importedDataSearch[i].pm+", OZONE: "+importedDataSearch[i].ozone;
-		   }
-		   else if(zip == "undefined"){
-		  // infowindow.setContent("No data found for PM and OZONE");
-		  infowindowContent.children['place-address'].textContent = "No Data Found for PM and OZONE"
-		   }
 		  }
-		 
          
+          //infowindowContent.children['place-address'].textContent = address;
           infowindow.open(map, marker);
         });
 
@@ -541,15 +513,14 @@ $('html body').keydown(function(e) {
         });
       }
       /*Google Map End*/
-
-        
         $(window).on("load", function(event) {
+            $("#result").val("95112");
+            $("#search-button").click();
             importedData = JSON.stringify({{import|safe}});
 			importedDataSearch = JSON.parse(importedData);
 			console.log(importedDataSearch);
             initMap1();
         });
-        
 
 
         $(".nav")[0].style.background = "#F97016";
@@ -584,7 +555,7 @@ $('html body').keydown(function(e) {
                                 futureData(newData, zipcode);
                             },
                             'error': function(error) {
-                                console.log("{{Request_alert}} "+JSON.stringify(error));
+
                             }
                         });
                         $.ajax({
@@ -595,7 +566,7 @@ $('html body').keydown(function(e) {
                             },
                             'error' : function(request,error)
                             {
-                                console.log("{{Request_alert}} "+JSON.stringify(error));
+                                alert("{{Request_alert}} "+JSON.stringify(request));
                             }
                         });
                     },
