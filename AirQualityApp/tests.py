@@ -74,7 +74,7 @@ class SearchTest(TestCase):
     
 
     def test_section_content(self):
-        content = self.driver.find_element_by_id("about_button")
+        content = self.driver.find_element_by_id("about_us_button")
         time.sleep(1)
         content.click()
         time.sleep(2)
@@ -100,8 +100,27 @@ class SearchTest(TestCase):
             email.send_keys(letter)
             time.sleep(1)
         
+        time.sleep(2)
+
         for letter in type_zipcode:
-            
+            zipcode.send_keys(letter)
+            time.sleep(1)
+        
+        time.sleep(2)
+
+        button = self.driver.find_element_by_id("subscribing")
+        button.click()
+
+        time.sleep(10)
+
+        verify = self.driver.find_element_by_id("verfication_code")
+
+        if verify.value_of_css_property("display"):
+            self.assertTrue(verify.value_of_css_property("display") == "inline")
+        else:
+            self.assertTrue(1 == 2)
+        
+
 
     def tearDown(self):
         self.driver.close()
