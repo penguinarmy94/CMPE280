@@ -40,6 +40,32 @@
                     <a href="javascript:void(0);" class="icon" onclick="menuChange()"><i class="fa fa-bars"></i></a>
                 </nav>
             </div>
+            <div id="search">
+                <form id="search-form">
+                    <div class="pac-card" id="pac-card">
+                        <div>
+                            <label class="searchLabel">{{Countries}}</label>
+                            <br>
+                            <div id="country-selector" class="pac-controls">
+                                <input type="radio" name="type" id="changecountry-usa">
+                                <label for="changecountry-usa">{{USA}}</label>
+
+                                <input type="radio" name="type" id="changecountry-usa-and-uot" checked="checked">
+                                <label for="changecountry-usa-and-uot">{{USA_search_title}}</label>
+                            </div>
+                        </div>
+                        <div id="pac-container">
+                        <input id="pac-input" type="text"
+                            placeholder="Enter a location">
+                        </div>
+                    </div>
+                    <div id="infowindow-content">
+                        <img src="" width="16" height="16" id="place-icon">
+                        <span id="place-name"  class="title"></span><br>
+                        <span id="place-address"></span>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
     <span itemscope itemtype="http://schema.org/Organization">
@@ -52,32 +78,6 @@
         </div>
         <div id="body_block">
             <section id="air-safe">
-                <div id="search">
-                    <form id="search-form">
-                        <div class="pac-card" id="pac-card">
-                            <div>
-                                <label class="searchLabel">{{Countries}}</label>
-                                <br>
-                                <div id="country-selector" class="pac-controls">
-                                    <input type="radio" name="type" id="changecountry-usa">
-                                    <label for="changecountry-usa">{{USA}}</label>
-
-                                    <input type="radio" name="type" id="changecountry-usa-and-uot" checked="checked">
-                                    <label for="changecountry-usa-and-uot">{{USA_search_title}}</label>
-                                </div>
-                            </div>
-                            <div id="pac-container">
-                            <input id="pac-input" type="text"
-                                placeholder="Enter a location">
-                            </div>
-                        </div>
-                        <div id="infowindow-content">
-                            <img src="" width="16" height="16" id="place-icon">
-                            <span id="place-name"  class="title"></span><br>
-                            <span id="place-address"></span>
-                        </div>
-                    </form>
-                </div>
                 <div id="map"></div>
             </section>
             <section id="forecast">
