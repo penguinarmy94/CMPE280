@@ -29,10 +29,9 @@ class SearchTest(TestCase):
         forecast = self.driver.find_element_by_id("forecast_button")
         forecast.click()
         elem = self.driver.find_elements_by_class_name("highcharts-title")
-        print(elem[0].text)
-        self.assertTrue(1==1)
+        self.assertTrue("94040" in elem[0].text)
     
-    """
+    
     def test_sections(self):
         forecast = self.driver.find_element_by_id("forecast_button")
         past = self.driver.find_element_by_id("past_data_button")
@@ -75,11 +74,34 @@ class SearchTest(TestCase):
     
 
     def test_section_content(self):
-        content = self.driver.find_element_by_id("forecast")
+        content = self.driver.find_element_by_id("about_button")
+        time.sleep(1)
+        content.click()
+        time.sleep(2)
+        about = self.driver.find_element_by_id("about")
+        if about.value_of_css_property("display"):
+            self.assertTrue(about.value_of_css_property("display") == "block")
+        else:
+            self.assertTrue(1 == 2)
+        
+
     
     def test_subscribe(self):
-        subscribe = self.driver.find_element_by_id("subscribe")
-    """
+        subscribe = self.driver.find_element_by_id("subscribe_button")
+        time.sleep(2)
+        subscribe.click()
+        time.sleep(2)
+        email = self.driver.find_element_by_id("subscribe_email")
+        zipcode = self.driver.find_element_by_id("subscribe_zipcode")
+        type_email = ["l", "u", "i", "s", ".", "o", "t", "e", "r", "o", "@", "s", "j", "s", "u", ".", "e", "d", "u"]
+        type_zipcode = ["9", "5", "1", "1", "2"]
+
+        for letter in type_email:
+            email.send_keys(letter)
+            time.sleep(1)
+        
+        for letter in type_zipcode:
+            
 
     def tearDown(self):
         self.driver.close()
