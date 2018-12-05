@@ -31,7 +31,8 @@ section { width: 100%; min-height: 100%; height: auto; margin-top: 10px; margin-
 #subscribe_table tr { height: 40px; }
 #subscribe_email { width: auto; }
 #subscribe_zipcode { width: auto; }
-#subscribing, #verfication_code, #submit_verfication_code, #subscription_done
+#verfication_code { color: black; }
+#subscribing, #submit_verfication_code, #subscription_done
 { margin: 30px; background:#F97016;color:white;border:none;height:50px;width:100px;border-radius:10px;}
 #loading-block {
   margin: auto;
@@ -211,6 +212,7 @@ body {
 
 .topnav .icon {
   display: none;
+  
 }
 
 @media screen and (max-width: 600px) {
@@ -218,6 +220,7 @@ body {
   .topnav a.icon {
     float: right;
     display: block;
+    background:#23408C;
   }
   .nav{width:unset;}
 }

@@ -10,6 +10,8 @@ past_url = ("http://www.airnowapi.org/aq/observation/zipCode/historical/?format=
 
 def index(request):
 
+    print(datetime.datetime.today().hour)
+
     try:
         zips = models.Zip.objects.all()
         points = []
