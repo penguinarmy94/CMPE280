@@ -465,21 +465,24 @@ $('html body').keydown(function(e) {
                     //Update new data
                     break;
                 }
+				//else if()
             }
           }
-		   infowindowContent.children['place-icon'].src = place.icon;
+		  infowindowContent.children['place-icon'].src = place.icon;
           infowindowContent.children['place-name'].textContent = place.name;	
+		  if(zip !== undefined){
 		  for(var i=0;i<importedDataSearch.length;i++){
-			if(zip !== "undefined"){
+			
 				if(parseInt(zip) == parseInt(importedDataSearch[i].zipcode)){
-					 infowindowContent.children['place-address'].textContent = "PM: "+importedDataSearch[i].pm+", OZONE:"+importedDataSearch[i].ozone;
-				}
+					 infowindowContent.children[3].textContent = "PM: "+importedDataSearch[i].pm+", OZONE:"+importedDataSearch[i].ozone;
+				}//['place-address']
+			 }
 			}
-			else if(zip == "undefined"){
-				infowindowContent.children['place-address'].textContent = "No Data found for PM and OZONE"
-			}
+			else if(zip == "undefined" || zip == undefined  || zip == null || zip == ""){
+				infowindowContent.children[3].textContent = "No Data found for PM and OZONE";
+			}//['place-address']
 
-		  }
+		  
          
           //infowindowContent.children['place-address'].textContent = address;
           infowindow.open(map, marker);
