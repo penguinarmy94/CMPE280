@@ -247,7 +247,7 @@ $('html body').keydown(function(e) {
    $(document).keypress(function(e){
         if (e.which == 13){
             e.preventDefault();
-            
+
         }
     });
 
@@ -326,9 +326,11 @@ $('html body').keydown(function(e) {
 		var x = document.getElementById("myTopnav");
 		if (x.className === "topnav") {
 			x.className += " responsive";
+            $('a.icon').css('background','#F97016');
 		} else {
 			x.className = "topnav";
 			$(".container-fluid")[0].style.paddingTop = "0px";
+            $('a.icon').css('background','#23408C');
 		}
 	}
 
