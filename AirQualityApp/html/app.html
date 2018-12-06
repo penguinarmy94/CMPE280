@@ -418,8 +418,8 @@ $('html body').keydown(function(e) {
 					/*'<p>'+feature[i].state+'</p>'+
 					'<p>'+feature[i].country+'</p>'+
 					'<p>'+feature[i].zipcode+'</p>'+*/
-					'<p><b>PM: '+feature[i].pm+'</b></p>'+
-					'<p><b>OZONE: '+feature[i].ozone+'</b></p>'+
+					'<p><b>{{PM}}: '+feature[i].pm+'</b></p>'+
+					'<p><b>{{OZONE}}: '+feature[i].ozone+'</b></p>'+
 					'</div>'+
 					'</div>';
 
@@ -507,30 +507,32 @@ $('html body').keydown(function(e) {
 				//else if()
             }
           }
+		  setTimeout(function(){
 		  infowindowContent.children['place-icon'].src = place.icon;
           infowindowContent.children['place-name'].textContent = place.name;	
 		  if(zip !== undefined){
 		  for(var i=0;i<importedDataSearch.length;i++){
 			
 				if(parseInt(zip) == parseInt(importedDataSearch[i].zipcode)){
-					 infowindowContent.children[3].textContent = "PM: "+importedDataSearch[i].pm+", OZONE:"+importedDataSearch[i].ozone;
+					 infowindowContent.children[3].textContent = "{{PM}}: "+importedDataSearch[i].pm+", {{OZONE}}: "+importedDataSearch[i].ozone;
 				}//['place-address']
 			 }
 			}
 			else if((zip == "undefined" || zip == undefined  || zip == null || zip == "")&& (city == "undefined" || city == undefined  || city == null || city == "")){
-				infowindowContent.children[3].textContent = "No Data found for PM and OZONE";
+				infowindowContent.children[3].textContent = "{{No_Data_found}}";
 			}//['place-address']
 			else if(city !== undefined){
 			 for(var i=0;i<importedDataSearch.length;i++){
 			
 				if(city == importedDataSearch[i].city.toLowerCase()){
-					 infowindowContent.children[3].textContent = "PM: "+importedDataSearch[i].pm+", OZONE:"+importedDataSearch[i].ozone;
+					 infowindowContent.children[3].textContent = "{{PM}}: "+importedDataSearch[i].pm+", {{OZONE}}: "+importedDataSearch[i].ozone;
 				}//['place-address']
 			 }
 			}
 
           //infowindowContent.children['place-address'].textContent = address;
           infowindow.open(map, marker);
+		  }, 4000);
         });
 
 }
