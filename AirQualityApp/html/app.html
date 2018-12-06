@@ -252,6 +252,13 @@ $('html body').keydown(function(e) {
 	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC8E-rdFsN24W5yP59JQmqlcu-_NU2DkUo&libraries=places&language={{region}}"  async defer></script>
     <script>
 
+    $(document).keypress(function(e){
+        if (e.which == 13){
+            e.preventDefault();
+
+        }
+    });
+
     $('#localization').on("change", function(event) {
         window.location.href = "?local=" + $(this).val();
     });
@@ -382,6 +389,26 @@ $('html body').keydown(function(e) {
 				  var lati = feature[i].latitude;
 				  var longi = feature[i].longitude;
 				  var latLng = new google.maps.LatLng(lati,longi);
+                  var circ_color = "";
+
+                    if (feature[i].pm >= 301) {
+                        circ_color = "#170000";
+                    }
+                    else if (feature[i].pm < 301 && feature[i].pm >= 201) {
+                        circ_color = "#FFFF00";
+                    }
+                    else if (feature[i].pm < 201 && feature[i].pm >= 151) {
+                        circ_color = "#FF0000";
+                    }
+                    else if (feature[i].pm < 151 && feature[i].pm >= 101) {
+                        circ_color = "#FFA500";
+                    }
+                    else if (feature[i].pm < 101 && feature[i].pm >= 51) {
+                        circ_color = "#FFFF00";
+                    }
+                    else {
+                        circ_color = "#00FF00";
+                    }
 				  var contentString = '<div id="content">'+
 					'<div id="siteNotice">'+
 					'</div>'+
@@ -391,10 +418,11 @@ $('html body').keydown(function(e) {
 					/*'<p>'+feature[i].state+'</p>'+
 					'<p>'+feature[i].country+'</p>'+
 					'<p>'+feature[i].zipcode+'</p>'+*/
-					'<p><b>PM: '+feature[i].pm+'</b></p>'+
-					'<p><b>OZONE: '+feature[i].ozone+'</b></p>'+
+					'<p><b>{{PM}}: '+feature[i].pm+'</b></p>'+
+					'<p><b>{{OZONE}}: '+feature[i].ozone+'</b></p>'+
 					'</div>'+
 					'</div>';
+
 				  feature.forEach(function(feature) {
 				  var marker = new google.maps.Marker({
 					position: latLng,
@@ -407,10 +435,10 @@ $('html body').keydown(function(e) {
 				 // if(data.locations.location[i].type == "RetailLocation"){
 					var circle = new google.maps.Circle({
 					  map: map,
-					  strokeColor: '#FF0000',
+					  strokeColor: circ_color,
 					  strokeOpacity: 0.8,
 					  strokeWeight: 0.5,
-					  fillColor: '#FF0000',
+					  fillColor: circ_color,
 					  fillOpacity: 0.008,
 					  radius: 2500   // 10 miles in metres
 		
@@ -479,30 +507,32 @@ $('html body').keydown(function(e) {
 				//else if()
             }
           }
+		  setTimeout(function(){
 		  infowindowContent.children['place-icon'].src = place.icon;
           infowindowContent.children['place-name'].textContent = place.name;	
 		  if(zip !== undefined){
 		  for(var i=0;i<importedDataSearch.length;i++){
 			
 				if(parseInt(zip) == parseInt(importedDataSearch[i].zipcode)){
-					 infowindowContent.children[3].textContent = "PM: "+importedDataSearch[i].pm+", OZONE:"+importedDataSearch[i].ozone;
+					 infowindowContent.children[3].textContent = "{{PM}}: "+importedDataSearch[i].pm+", {{OZONE}}: "+importedDataSearch[i].ozone;
 				}//['place-address']
 			 }
 			}
 			else if((zip == "undefined" || zip == undefined  || zip == null || zip == "")&& (city == "undefined" || city == undefined  || city == null || city == "")){
-				infowindowContent.children[3].textContent = "No Data found for PM and OZONE";
+				infowindowContent.children[3].textContent = "{{No_Data_found}}";
 			}//['place-address']
 			else if(city !== undefined){
 			 for(var i=0;i<importedDataSearch.length;i++){
 			
 				if(city == importedDataSearch[i].city.toLowerCase()){
-					 infowindowContent.children[3].textContent = "PM: "+importedDataSearch[i].pm+", OZONE:"+importedDataSearch[i].ozone;
+					 infowindowContent.children[3].textContent = "{{PM}}: "+importedDataSearch[i].pm+", {{OZONE}}: "+importedDataSearch[i].ozone;
 				}//['place-address']
 			 }
 			}
 
           //infowindowContent.children['place-address'].textContent = address;
           infowindow.open(map, marker);
+		  }, 4000);
         });
 
 }
