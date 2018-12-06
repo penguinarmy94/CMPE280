@@ -463,8 +463,14 @@ $('html body').keydown(function(e) {
                     var zip = place.address_components[index].short_name;
                     fetchAQData(zip);
                     //Update new data
-                    break;
+                    //break;
                 }
+				else if(place.address_components[index].types[0] == "city" || place.address_components[index].types[0] == "locality"){
+					var city = place.address_components[index].short_name.toLowerCase();
+                    //fetchAQData(zip);
+                    //Update new data
+                    //break;
+				}
 				//else if()
             }
           }
@@ -478,12 +484,18 @@ $('html body').keydown(function(e) {
 				}//['place-address']
 			 }
 			}
-			else if(zip == "undefined" || zip == undefined  || zip == null || zip == ""){
+			else if((zip == "undefined" || zip == undefined  || zip == null || zip == "")&& (city == "undefined" || city == undefined  || city == null || city == "")){
 				infowindowContent.children[3].textContent = "No Data found for PM and OZONE";
 			}//['place-address']
+			else if(city !== undefined){
+			 for(var i=0;i<importedDataSearch.length;i++){
+			
+				if(city == importedDataSearch[i].city.toLowerCase()){
+					 infowindowContent.children[3].textContent = "PM: "+importedDataSearch[i].pm+", OZONE:"+importedDataSearch[i].ozone;
+				}//['place-address']
+			 }
+			}
 
-		  
-         
           //infowindowContent.children['place-address'].textContent = address;
           infowindow.open(map, marker);
         });
