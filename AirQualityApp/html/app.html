@@ -252,6 +252,13 @@ $('html body').keydown(function(e) {
 	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC8E-rdFsN24W5yP59JQmqlcu-_NU2DkUo&libraries=places&language={{region}}"  async defer></script>
     <script>
 
+    $(document).keypress(function(e){
+        if (e.which == 13){
+            e.preventDefault();
+
+        }
+    });
+
     $('#localization').on("change", function(event) {
         window.location.href = "?local=" + $(this).val();
     });
@@ -382,6 +389,26 @@ $('html body').keydown(function(e) {
 				  var lati = feature[i].latitude;
 				  var longi = feature[i].longitude;
 				  var latLng = new google.maps.LatLng(lati,longi);
+                  var circ_color = "";
+
+                    if (feature[i].pm >= 301) {
+                        circ_color = "#170000";
+                    }
+                    else if (feature[i].pm < 301 && feature[i].pm >= 201) {
+                        circ_color = "#FFFF00";
+                    }
+                    else if (feature[i].pm < 201 && feature[i].pm >= 151) {
+                        circ_color = "#FF0000";
+                    }
+                    else if (feature[i].pm < 151 && feature[i].pm >= 101) {
+                        circ_color = "#FFA500";
+                    }
+                    else if (feature[i].pm < 101 && feature[i].pm >= 51) {
+                        circ_color = "#FFFF00";
+                    }
+                    else {
+                        circ_color = "#00FF00";
+                    }
 				  var contentString = '<div id="content">'+
 					'<div id="siteNotice">'+
 					'</div>'+
@@ -395,6 +422,7 @@ $('html body').keydown(function(e) {
 					'<p><b>OZONE: '+feature[i].ozone+'</b></p>'+
 					'</div>'+
 					'</div>';
+
 				  feature.forEach(function(feature) {
 				  var marker = new google.maps.Marker({
 					position: latLng,
@@ -407,10 +435,10 @@ $('html body').keydown(function(e) {
 				 // if(data.locations.location[i].type == "RetailLocation"){
 					var circle = new google.maps.Circle({
 					  map: map,
-					  strokeColor: '#FF0000',
+					  strokeColor: circ_color,
 					  strokeOpacity: 0.8,
 					  strokeWeight: 0.5,
-					  fillColor: '#FF0000',
+					  fillColor: circ_color,
 					  fillOpacity: 0.008,
 					  radius: 2500   // 10 miles in metres
 		
