@@ -5,8 +5,9 @@
     "\\AirQualityApp\\forecasting",
     "\\AirQualityApp\\html",
     "\\AirQualityApp\\migrations",
-    "\\AirSafe"
+    "\\AirSafe",
+    "\\static"
   ],
-  "SelectedNode": "\\AirQualityApp\\html\\app.html",
+  "SelectedNode": "\\AirQualityApp\\models.py",
   "PreviewInSolutionExplorer": false
 }
