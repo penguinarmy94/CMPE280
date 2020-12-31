@@ -26,8 +26,10 @@ SECRET_KEY = '#k4p1)-d)am8!)3hkin^a5s&p@1^xuu5%8%msu!^=qe@=v)=wq'
 DEBUG = True
 
 ALLOWED_HOSTS = [
-	'airsafe-env.tqm8pqbcyp.us-west-1.elasticbeanstalk.com',
-	'localhost'
+	'airsafe-dev.us-west-1.elasticbeanstalk.com',
+	'localhost',
+    '172.31.19.228',
+    'airsafe.sites.luadis.com'
 ]
 
 
@@ -87,10 +89,10 @@ WSGI_APPLICATION = 'AirSafe.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'airsafe',
+        'NAME': 'airsafe_main_db',
         'USER': 'root',
-        'PASSWORD': 'password',
-        'HOST': 'airnow.cq2wcl14nou2.us-west-1.rds.amazonaws.com',
+        'PASSWORD': 'testpassword',
+        'HOST': 'airsafedb.cq2wcl14nou2.us-west-1.rds.amazonaws.com',
         'PORT': '3306'
     }
 }

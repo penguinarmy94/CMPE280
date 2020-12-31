@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from . import models
 
-import requests, json, datetime, smtplib, random
+import requests, json, datetime, smtplib, random, os
 from . import forecast
 
 current_url = ("http://www.airnowapi.org/aq/observation/zipCode/current/?format=application/json&zipCode=", "&distance=25&API_KEY=1BC71708-1C68-48AF-8742-7AEABACBE7F2")
@@ -36,12 +36,25 @@ def index(request):
             json_data["region"] = "EN"
 
         json_data["import"] = json.dumps(points)
+        json_data["GOOGLE_MAPS_API_KEY"] = get_credentials(".credentials/google-maps-api.json")["key"]
 
         return render(request, 'app.html', json_data)
     except Exception as e:
         print(str(e))
         return HttpResponse("Could not get the page requested")
 
+def get_credentials(credentials_path):
+    default = { "key" : "" }
+
+    if os.path.exists(credentials_path) and credentials_path.endswith(".json"):
+        try:
+            with open(credentials_path, "r") as json_reader:
+                return json.load(json_reader)
+        except Exception:
+            print(f"Could not credentials for the path {credentials_path}")
+    
+    return default
+        
 def latest(request):
     if request.method == "GET" and request.is_ajax():
         zipcode = getZipcode(request)
@@ -65,14 +78,8 @@ def latest(request):
             return HttpResponse(json.dumps(data[0]))
     else:
         return HttpResponse(json.dumps({"type": "not a request"}))
-
+    
 def future(request):
-    #zips = models.Zip.objects.all()
-
-    #historyUpdate(zips, datetime.date.today(), 20)
-
-    #return HttpResponse("success")
-
     if request.method == "GET" and request.is_ajax():
         zipcode = getZipcode(request)
 
@@ -83,11 +90,14 @@ def future(request):
         if code:
             forecasted_data = list(models.Forecast.objects.filter(zipcode=zipcode).order_by("stamp").values())
 
-            if not forecasted_data:
+            if not forecasted_data or len(forecasted_data) == 0:
+                print(forecasted_data)
                 data = list(models.AQ.objects.filter(zipcode=zipcode).values('ozone'))
                 results = forecast.predict(zipcode, data)
                 addForecasts(zipcode, results)
                 forecasted_data = list(models.Forecast.objects.filter(zipcode=zipcode).order_by("stamp").values())
+            else:
+                print("There is forecasted data already set")
 
             for date in forecasted_data:
                 date["stamp"] = date["stamp"].isoformat()
@@ -98,14 +108,19 @@ def future(request):
     else:
         return redirect(index)
 
-
 def updatePast(request):
     zips = models.Zip.objects.all()
 
-    weekUpdate(zips, datetime.date.today())
-
+    historyWeekUpdate(zips, datetime.date.today())
 
     return HttpResponse("success")
+
+def updateFuture():
+    zips = models.Zip.objects.all()
+
+    forecastWeekUpdate(zips, datetime.date.today())
+
+    return True
 
 def GetPastData(request):
     if request.method == "GET" and request.is_ajax():
@@ -136,7 +151,7 @@ def verifyEmailAndZipcode(request):
         if new_code:
             new_code = models.Zip(code=zipcode)
             new_code.save()
-            weekUpdate([new_code], datetime.date.today())
+            historyWeekUpdate([new_code], datetime.date.today())
             historyUpdate([new_code], datetime.date.today(), 20)
             historyData = models.History.objects.filter(zipcode=zipcode)
             for obj in historyData:
@@ -150,14 +165,14 @@ def verifyEmailAndZipcode(request):
     sender = "cmpe280.airsafe@gmail.com"
     receiver = email
     message = """From: AirSafe <cmpe280.airsafe@gmail.com>
-To: """ + email + """
-Subject: Verification Code
+        To: """ + email + """
+        Subject: Verification Code
 
-Thank you for subscribing AirSafe! Your verification code is """ + code + """.
+        Thank you for subscribing AirSafe! Your verification code is """ + code + """.
 
 
-If you didn't subscribe our website, just ignore this email! Apology for our mistake!
-"""
+        If you didn't subscribe our website, just ignore this email! Apology for our mistake!
+    """
 
     try:
         server = smtplib.SMTP("smtp.gmail.com", 587)
@@ -193,13 +208,13 @@ def subscription(request):
     sender = "cmpe280.airsafe@gmail.com"
     receiver = email
     message = """From: AirSafe <cmpe280.airsafe@gmail.com>
-To: """ + email + """
-Subject: AirSafe Test Email
+        To: """ + email + """
+        Subject: AirSafe Test Email
 
-City: """ + aq.city + """    State: """ + aq.state + """
-Date: """ + str(aq.stamp) + """
-Ozone(O3) AQI: """ + str(aq.ozone) + """
-PM2.5 AQI: """ + str(aq.pm)
+        City: """ + aq.city + """    State: """ + aq.state + """
+        Date: """ + str(aq.stamp) + """
+        Ozone(O3) AQI: """ + str(aq.ozone) + """
+        PM2.5 AQI: """ + str(aq.pm)
     try:
         server = smtplib.SMTP("smtp.gmail.com", 587)
         server.ehlo()
@@ -214,23 +229,28 @@ PM2.5 AQI: """ + str(aq.pm)
         print ("Error: Unable to send the email")
         return HttpResponse("error")
 
-def weekUpdate(zips, today):
+def historyWeekUpdate(zips, today):
+    error = "Error Unloading"
 
     for zip in zips:
         for day in range(7):
             date = today - datetime.timedelta(days=day)
+            entry = models.AQ.objects.filter(zipcode=zip).filter(stamp=date)
+
+            if len(entry) > 0:
+                continue
 
             if date == today:
                 try:
                     aq = requests.get(current_url[0] + zip.code + current_url[1], timeout = 10)
-                except:
-                    print("Error unloading")
+                except Exception:
+                    print(error)
                     continue
             else:
                 try:
                     aq = requests.get(past_url[0] + zip.code + past_url[1] + date.isoformat() + past_url[2], timeout = 10)
-                except:
-                    print("Error unloading")
+                except Exception:
+                    print(error)
                     continue
 
             aq = json.loads(aq.text)
@@ -261,6 +281,27 @@ def weekUpdate(zips, today):
                 aq_object.save()
             else:
                 continue
+
+def forecastWeekUpdate(zips, today):
+    error = "Error Unloading"
+    number_of_days = 7
+
+    for zip in zips:
+        forecasted_dates = list(models.Forecast.objects.filter(zipcode=zip).values("stamp"))
+        previous_data = list(models.AQ.objects.filter(zipcode=zip).values('ozone').order_by("stamp"))
+        new_data = []
+
+        for day in range(number_of_days):
+            new_date = today + datetime.timedelta(days=day+1)
+
+            if not new_date in forecasted_dates:
+                data_index = -1*(number_of_days) + day
+                new_day_forecast = forecast.predict(zip.code, [previous_data[data_index]])
+
+                if new_day_forecast:
+                    new_data += new_day_forecast
+        
+        addForecasts(zip, new_data)
 
 def historyUpdate(zips, start, amount):
     today = datetime.date.today()
@@ -340,11 +381,11 @@ def dayUpdate():
 
                 for theData in new_aq:
                     if theData["ParameterName"] == "PM2.5":
-                        aq.pm = theData["AQI"]
-                        history.pm = theData["AQI"]
+                        aq.pm = theData["AQI"] if theData["AQI"] else 0
+                        history.pm = theData["AQI"] if theData["AQI"] else 0
                     elif theData["ParameterName"] == "O3" or theData["ParameterName"] == "OZONE":
-                        aq.ozone = theData["AQI"]
-                        history.ozone = theData["AQI"]
+                        aq.ozone = theData["AQI"] if theData["AQI"] else 0
+                        history.ozone = theData["AQI"] if theData["AQI"] else 0
                     else:
                         continue
 
@@ -356,7 +397,7 @@ def dayUpdate():
                 history.save()
         except Exception as e:
             print(str(e))
-            return
+            continue
 
 def getNewData(zipcode):
 
@@ -365,7 +406,7 @@ def getNewData(zipcode):
         if data:
             data = models.Zip(code=zipcode)
             data.save()
-            weekUpdate([data], datetime.date.today())
+            historyWeekUpdate([data], datetime.date.today())
             historyUpdate([data], datetime.date.today(), 20)
 
             #for obj in historyData:

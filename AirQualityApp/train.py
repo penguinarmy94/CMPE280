@@ -2,7 +2,7 @@ import numpy, requests, math, pandas
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 from sklearn.model_selection import train_test_split
-from sklearn.externals import joblib
+import joblib
 
 def dates_calculation(dates):
     length = len(dates)
@@ -18,7 +18,6 @@ def dates_calculation(dates):
 def date_calculation(date):
     split_date = date.split('-')
     return (365 + float(split_date[1])*30 + float(split_date[2])) / float(split_date[0])
-
 
 def train():
       pollution = pandas.read_csv('AirQualityApp/forecasting/pollution.csv')
@@ -49,4 +48,4 @@ def train():
       # Explained variance score: 1 is perfect prediction
       print('R-squared: %.2f' % r2_score(test_y, prediction))
 
-      joblib.dump(model, 'model.joblib')
+      joblib.dump(model, 'AirQualityApp/forecasting/model.joblib')

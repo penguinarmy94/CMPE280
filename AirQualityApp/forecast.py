@@ -6,24 +6,27 @@ import matplotlib
 import matplotlib.pyplot as plotter
 from sklearn.model_selection import train_test_split
 import requests, math
-from sklearn.externals import joblib
-import datetime
+import datetime, joblib
 from .train import date_calculation, train
 
 
-def predict(zip, ozones):
+def predict(zip, ozones, start_date=None):
     try:        
-        model = joblib.load('model.joblib')
+        model = joblib.load('AirQualityApp/forecasting/model.joblib')
+        print("Forecast model already set")
     except Exception as e:
         train()
-        model = joblib.load('model.joblib')
+        model = joblib.load('AirQualityApp/forecasting/model.joblib')
+        print("New forecast model created and trained")
 
-    tomorrow = datetime.date.today() + datetime.timedelta(days=1)
+    if not start_date:
+        start_date = datetime.date.today() + datetime.timedelta(days=1)
+    
     forecast = []
 
     try:
         for day in range(len(ozones)):
-            date = tomorrow + datetime.timedelta(days=day)
+            date = start_date + datetime.timedelta(days=day)
             value = date_calculation(date.isoformat())
             new_data = [[ozones[day]["ozone"], value, zip]]
 

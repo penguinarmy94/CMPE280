@@ -70,115 +70,107 @@
         </div>
     </div>
 </header>
-    <span itemscope itemtype="http://schema.org/Organization">
-        <meta itemprop="url" content="www.projectsites.xyz" />
-        <meta itemprop="logo" content="logo.png" />
-    </span>
-    <div class="container-fluid">
-        <div id="loading-block">
-            <img id="loadImg" src="{% static "loading.gif" %}">
-        </div>
-        <div id="body_block">
-            <section id="air-safe">
-                <div id="map"></div>
-            </section>
-            <section id="forecast">
-                <div id="container"></div>
-            </section>
-            <section id="past">
-                <div id="pastData"></div>
-            </section>
+<span itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="url" content="www.projectsites.xyz" />
+    <meta itemprop="logo" content="logo.png" />
+</span>
+<div class="container-fluid">
+    <div id="loading-block">
+        <img id="loadImg" src="{% static "loading.gif" %}">
+    </div>
+    <div id="body_block">
+        <section id="air-safe">
+            <div id="map"></div>
+        </section>
+        <section id="forecast">
+            <div id="container"></div>
+        </section>
+        <section id="past">
+            <div id="pastData"></div>
+        </section>
        <section id="about">
         <div class="card-carousel">
             <div class="my-card">
                 <div class="card">
-                    <div class="card_image">
                     <img src="{% static "jPhoto.jpg" %}" height="100%"width="100%">
-                    </div>
                     <div align="center">
-                    <p><h3> Jasmine Akkal</h3></p>
-                    <p><h4> {{MS_CMPE}}</h4></p>
-                    <p> jasmine.akkal@sjsu.edu</p>
+                        <p><h3> Jasmine Akkal</h3></p>
+                        <p><h4> {{MS_CMPE}}</h4></p>
+                        <p> jasmine.akkal@gmail.com</p>
                     </div>
                 </div>
             </div>
             <div class="my-card">
                 <div class="card">
-                    <div class="card_image">
-                        <img src="{% static "RajatPhoto.JPG" %}" height="100%"width="100%">
-                    </div>
+                    <img src="{% static "RajatPhoto.JPG" %}" height="100%"width="100%">
                     <div align="center">
                         <p><h3> Rajat Gupta</h3></p>
                         <p><h4> {{MS_CMPE}}</h4></p>
-                        <p> rajat.gupta@sjsu.edu</p>
+                        <p> rajat.gupta@gmail.com</p>
                     </div>
                 </div>
             </div>
             <div class="my-card">
                 <div class="card">
-                    <div class="card_image">
-                        <img src="{% static "me.jpg" %}"  height="100%"width="100%">
-                    </div>
+                    <img src="{% static "me.jpg" %}"  height="100%"width="100%">
                     <div align="center">
                         <p><h3> Luis Otero</h3></p>
                         <p><h4> {{MS_SE}}</h4></p>
-                        <p> luis.otero@sjsu.edu</p>
+                        <p> luisote94@gmail.com</p>
                     </div>
                 </div>
             </div>
             <div class="my-card">
             <div class="card">
-                        <div class="card_image">
                         <img src="{% static "Yi-Chin Hsiao.jpg" %}" height="100%"width="100%">
-                        </div>
                         <div align="center">
                         <p><h3> Yi Chin Hsiao</h3></p>
                         <p><h4> {{MS_SE}}</h4></p>
-                        <p> yichin.hsiao@sjsu.edu</p>
+                        <p> yichin.hsiao@gmail.com</p>
                         </div>
                     </div>
             </div>
 </div>
 <script>
-$num = $('.my-card').length;
-$even = $num / 2;
-$odd = ($num + 1) / 2;
+    $num = $('.my-card').length;
+    $even = $num / 2;
+    $odd = ($num + 1) / 2;
 
-if ($num % 2 == 0) {
-  $('.my-card:nth-child(' + $even + ')').addClass('active');
-  $('.my-card:nth-child(' + $even + ')').prev().addClass('prev');
-  $('.my-card:nth-child(' + $even + ')').next().addClass('next');
-} else {
-  $('.my-card:nth-child(' + $odd + ')').addClass('active');
-  $('.my-card:nth-child(' + $odd + ')').prev().addClass('prev');
-  $('.my-card:nth-child(' + $odd + ')').next().addClass('next');
-}
+    if ($num % 2 == 0) {
+    $('.my-card:nth-child(' + $even + ')').addClass('active');
+    $('.my-card:nth-child(' + $even + ')').prev().addClass('prev');
+    $('.my-card:nth-child(' + $even + ')').next().addClass('next');
+    } else {
+    $('.my-card:nth-child(' + $odd + ')').addClass('active');
+    $('.my-card:nth-child(' + $odd + ')').prev().addClass('prev');
+    $('.my-card:nth-child(' + $odd + ')').next().addClass('next');
+    }
 
-$('.my-card').click(function() {
-  $slide = $('.active').width();
-  console.log($('.active').position().left);
-  if ($(this).hasClass('next')) {
-    $('.card-carousel').stop(false, true).animate({left: '-=' + $slide});
-  } else if ($(this).hasClass('prev')) {
-    $('.card-carousel').stop(false, true).animate({left: '+=' + $slide});
-  }
-  $(this).removeClass('prev next');
-  $(this).siblings().removeClass('prev active next');
-  $(this).addClass('active');
-  $(this).prev().addClass('prev');
-  $(this).next().addClass('next');
-});
+    $('.my-card').click(function() {
+    $slide = $('.active').width();
+    console.log($('.active').position().left);
+    if ($(this).hasClass('next')) {
+        $('.card-carousel').stop(false, true).animate({left: '-=' + $slide});
+    } else if ($(this).hasClass('prev')) {
+        $('.card-carousel').stop(false, true).animate({left: '+=' + $slide});
+    }
+    $(this).removeClass('prev next');
+    $(this).siblings().removeClass('prev active next');
+    $(this).addClass('active');
+    $(this).prev().addClass('prev');
+    $(this).next().addClass('next');
+    });
 
 
-// Keyboard nav
-$('html body').keydown(function(e) {
-  if (e.keyCode == 37) { // left
-    $('.active').prev().trigger('click');
-  }
-  else if (e.keyCode == 39) { // right
-    $('.active').next().trigger('click');
-  }
-});
+    // Keyboard nav
+    $('html body').keydown(function(e) {
+    if (e.keyCode == 37) { // left
+        $('.active').prev().trigger('click');
+    }
+    else if (e.keyCode == 39) { // right
+        $('.active').next().trigger('click');
+    }
+    });
 </script>
 <script type="text/javascript">
 
@@ -248,10 +240,10 @@ $('html body').keydown(function(e) {
     </div>
 	</footer>
 </div>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC8E-rdFsN24W5yP59JQmqlcu-_NU2DkUo&libraries=places&language={{region}}"  async defer></script>
-    <script>
-
+    
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{GOOGLE_MAPS_API_KEY}}&libraries=places&language={{region}}"  async defer></script>
+<script>
     $(document).keypress(function(e){
         if (e.which == 13){
             e.preventDefault();
@@ -324,16 +316,20 @@ $('html body').keydown(function(e) {
         }
 
 	});
-	$(".nav").mouseenter(function() {
-  $(this).css("background","rgb(239, 136, 68)");
-});
-	$(".nav").mouseleave(function() {
-	if($(this).hasClass('navClick'))
-	$(this).css("background","#F97016");
-	else
-	$(this).css("background","#23408C");
 
-});
+	$(".nav").mouseenter(function() {
+        $(this).css("background","rgb(239, 136, 68)");
+    });
+
+	$(".nav").mouseleave(function() {
+	    if($(this).hasClass('navClick')) {
+	        $(this).css("background","#F97016");
+        }
+	    else {
+	        $(this).css("background","#23408C");
+        }
+    });
+
 	function menuChange() {
 		var x = document.getElementById("myTopnav");
 		if (x.className === "topnav") {
@@ -344,71 +340,63 @@ $('html body').keydown(function(e) {
 		}
 	}
 
-	</script>
-	<script>
+</script>
+<script>
     /*Google Map Start*/
     var map;
 	var importedData;
 	var importedDataSearch;
 	function initMap1() {
-	var icons = {
-				markedReg: {
-				name: 'markedReg',
-				icon: '{% static "GreenFlag2.png" %}'
-				}
-          };
-    map = new google.maps.Map(document.getElementById('map'
-	), {
-			  zoom: 10,
-			  center: new google.maps.LatLng(37.753038, -122.423198),
-			  mapTypeId: 'roadmap',
-          gestureHandling: 'cooperative'
-			});
-	var card = document.getElementById('pac-card');
-	var input = document.getElementById('pac-input');
-	var countries = document.getElementById('country-selector');
-		  //map.controls[google.maps.ControlPosition.TOP_RIGHT].push(card);
+        var icons = {
+            markedReg: {
+                name: 'markedReg',
+                icon: '{% static "GreenFlag2.png" %}'
+            }
+        };
+        var map_element = document.getElementById("map");
 
+        map = new google.maps.Map(map_element, { zoom: 10, center: new google.maps.LatLng(37.753038, -122.423198), mapTypeId: 'roadmap', gestureHandling: 'cooperative' });
+	    
+        var card = document.getElementById('pac-card');
+	    var input = document.getElementById('pac-input');
+	    var countries = document.getElementById('country-selector');
+		//map.controls[google.maps.ControlPosition.TOP_RIGHT].push(card);
         var autocomplete = new google.maps.places.Autocomplete(input);
-
         // Set initial restrict to the greater list of countries.
-        autocomplete.setComponentRestrictions(
-            {'country': ['us', 'pr', 'vi', 'gu', 'mp']});
-
+        autocomplete.setComponentRestrictions({'country': ['us', 'pr', 'vi', 'gu', 'mp']});
         // Specify only the data fields that are needed.
-        autocomplete.setFields(
-            ['address_components', 'geometry', 'icon', 'name']);
-
+        autocomplete.setFields(['address_components', 'geometry', 'icon', 'name']);
         var infowindow = new google.maps.InfoWindow();
         var infowindowContent = document.getElementById('infowindow-content');
-        infowindow.setContent(infowindowContent);
-			var feature = [];
-            if(importedData){
-			feature = JSON.parse(importedData);
-					for (var i = 0; i < feature.length; i++) {
-				  var lati = feature[i].latitude;
-				  var longi = feature[i].longitude;
-				  var latLng = new google.maps.LatLng(lati,longi);
-                  var circ_color = "";
 
-                    if (feature[i].pm >= 301) {
-                        circ_color = "#170000";
-                    }
-                    else if (feature[i].pm < 301 && feature[i].pm >= 201) {
-                        circ_color = "#FFFF00";
-                    }
-                    else if (feature[i].pm < 201 && feature[i].pm >= 151) {
-                        circ_color = "#FF0000";
-                    }
-                    else if (feature[i].pm < 151 && feature[i].pm >= 101) {
-                        circ_color = "#FFA500";
-                    }
-                    else if (feature[i].pm < 101 && feature[i].pm >= 51) {
-                        circ_color = "#FFFF00";
-                    }
-                    else {
-                        circ_color = "#00FF00";
-                    }
+        infowindow.setContent(infowindowContent);
+		var feature = [];
+        if(importedData){
+			feature = JSON.parse(importedData);
+			for (var i = 0; i < feature.length; i++) {
+				var lati = feature[i].latitude;
+				var longi = feature[i].longitude;
+				var latLng = new google.maps.LatLng(lati,longi);
+                var circ_color = "";
+
+                if (feature[i].pm >= 301) {
+                    circ_color = "#170000";
+                }
+                else if (feature[i].pm < 301 && feature[i].pm >= 201) {
+                    circ_color = "#FFFF00";
+                }
+                else if (feature[i].pm < 201 && feature[i].pm >= 151) {
+                    circ_color = "#FF0000";
+                }
+                else if (feature[i].pm < 151 && feature[i].pm >= 101) {
+                    circ_color = "#FFA500";
+                }
+                else if (feature[i].pm < 101 && feature[i].pm >= 51) {
+                    circ_color = "#FFFF00";
+                }
+                else {
+                    circ_color = "#00FF00";
+                }
 				  var contentString = '<div id="content">'+
 					'<div id="siteNotice">'+
 					'</div>'+
@@ -455,8 +443,8 @@ $('html body').keydown(function(e) {
 				  marker.addListener('click', function() {
 				  infowindow.setContent(this.content);
 				  infowindow.open(map, marker);
-				});
-        });
+				});});
+
 		var marker = new google.maps.Marker({
           map: map,
           anchorPoint: new google.maps.Point(0, -29)
@@ -599,16 +587,6 @@ $('html body').keydown(function(e) {
                     'type': "GET",
                     'success': function(data) {
                         $.ajax({
-                            'url': "/future?" + search,
-                            'type': "GET",
-                            'success': function(newData) {
-                                futureData(newData, zipcode);
-                            },
-                            'error': function(error) {
-
-                            }
-                        });
-                        $.ajax({
                             'url' : '/GetData?' + search,
                             'type' : 'GET',
                             'success' : function(data) {
@@ -631,7 +609,7 @@ $('html body').keydown(function(e) {
                         });
                     },
                     'error': function(error) {
-
+                        console.log(error);
                     }
 
                 });
@@ -700,6 +678,8 @@ $('html body').keydown(function(e) {
             var AQstamp = [];
 
             x =JSON.parse(data);
+
+            console.log(data);
 
             for(var i=0;i<x.length;i++){
                 AQpm[i]=x[i].pm;
@@ -822,6 +802,6 @@ $('html body').keydown(function(e) {
           $("#subscribe_done_board").css("display", "none");
           $("#subscribe_board").css("display", "block");
         });
-    </script>
+</script>
 </body>
 </html>
