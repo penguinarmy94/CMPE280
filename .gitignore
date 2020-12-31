@@ -4,3 +4,5 @@
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
 airsafe_virtual/*
+testenv/*
+__pycache__
