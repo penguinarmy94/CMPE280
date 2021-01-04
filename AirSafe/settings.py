@@ -89,8 +89,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'airsafe_main_db',
         'USER': 'root',
-        'PASSWORD': 'password',
-        'HOST': 'airsafe.cq2wcl14nou2.us-west-1.rds.amazonaws.com',
+        'PASSWORD': 'testpassword',
+        'HOST': 'airsafedb.cq2wcl14nou2.us-west-1.rds.amazonaws.com',
         'PORT': '3306'
     }
 }

@@ -83,11 +83,14 @@ def future(request):
         if code:
             forecasted_data = list(models.Forecast.objects.filter(zipcode=zipcode).order_by("stamp").values())
 
-            if not forecasted_data:
+            if not forecasted_data or len(forecasted_data) == 0:
+                print(forecasted_data)
                 data = list(models.AQ.objects.filter(zipcode=zipcode).values('ozone'))
                 results = forecast.predict(zipcode, data)
                 addForecasts(zipcode, results)
                 forecasted_data = list(models.Forecast.objects.filter(zipcode=zipcode).order_by("stamp").values())
+            else:
+                print("There is forecasted data already set")
 
             for date in forecasted_data:
                 date["stamp"] = date["stamp"].isoformat()
@@ -97,7 +100,6 @@ def future(request):
             return HttpResponse(json.dumps({"type": "none"}))
     else:
         return redirect(index)
-
 
 def updatePast(request):
     zips = models.Zip.objects.all()
@@ -150,14 +152,14 @@ def verifyEmailAndZipcode(request):
     sender = "cmpe280.airsafe@gmail.com"
     receiver = email
     message = """From: AirSafe <cmpe280.airsafe@gmail.com>
-To: """ + email + """
-Subject: Verification Code
+        To: """ + email + """
+        Subject: Verification Code
 
-Thank you for subscribing AirSafe! Your verification code is """ + code + """.
+        Thank you for subscribing AirSafe! Your verification code is """ + code + """.
 
 
-If you didn't subscribe our website, just ignore this email! Apology for our mistake!
-"""
+        If you didn't subscribe our website, just ignore this email! Apology for our mistake!
+    """
 
     try:
         server = smtplib.SMTP("smtp.gmail.com", 587)
@@ -193,13 +195,13 @@ def subscription(request):
     sender = "cmpe280.airsafe@gmail.com"
     receiver = email
     message = """From: AirSafe <cmpe280.airsafe@gmail.com>
-To: """ + email + """
-Subject: AirSafe Test Email
+        To: """ + email + """
+        Subject: AirSafe Test Email
 
-City: """ + aq.city + """    State: """ + aq.state + """
-Date: """ + str(aq.stamp) + """
-Ozone(O3) AQI: """ + str(aq.ozone) + """
-PM2.5 AQI: """ + str(aq.pm)
+        City: """ + aq.city + """    State: """ + aq.state + """
+        Date: """ + str(aq.stamp) + """
+        Ozone(O3) AQI: """ + str(aq.ozone) + """
+        PM2.5 AQI: """ + str(aq.pm)
     try:
         server = smtplib.SMTP("smtp.gmail.com", 587)
         server.ehlo()
@@ -215,6 +217,7 @@ PM2.5 AQI: """ + str(aq.pm)
         return HttpResponse("error")
 
 def weekUpdate(zips, today):
+    error = "Error Unloading"
 
     for zip in zips:
         for day in range(7):
@@ -223,14 +226,14 @@ def weekUpdate(zips, today):
             if date == today:
                 try:
                     aq = requests.get(current_url[0] + zip.code + current_url[1], timeout = 10)
-                except:
-                    print("Error unloading")
+                except Exception:
+                    print(error)
                     continue
             else:
                 try:
                     aq = requests.get(past_url[0] + zip.code + past_url[1] + date.isoformat() + past_url[2], timeout = 10)
-                except:
-                    print("Error unloading")
+                except Exception:
+                    print(error)
                     continue
 
             aq = json.loads(aq.text)

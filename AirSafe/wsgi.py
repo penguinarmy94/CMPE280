@@ -7,7 +7,7 @@ For more information on this file, see
 https://docs.djangoproject.com/en/2.0/howto/deployment/wsgi/
 """
 
-import os, threading, datetime
+import os, threading, datetime, time
 
 from django.core.wsgi import get_wsgi_application
 
@@ -21,19 +21,18 @@ def update():
     next_date = datetime.date.today() + datetime.timedelta(days=1)
 
     while True:
-        time = datetime.datetime.today().hour
         day = datetime.date.today()
 
-        if time == 7:
-            if day == next_date:
-                views.dayUpdate()
-                next_date = day + datetime.timedelta(days=1)
-            elif day + datetime.timedelta(days=1) < next_date:
-                day = next_date
-            else:
-                print("The day represented as today is: " + day.isoformat())
+        if day == next_date:
+            views.dayUpdate()
+            next_date = day + datetime.timedelta(days=1)
         else:
-            print("The current date and time is: " + day.isoformat() + " " + str(time))
+            print("The day represented as today is: " + day.isoformat())
+        
+        time.sleep(60)
+        
+        # else:
+        #     print("The current date and time is: " + day.isoformat() + " " + str(time))
     
 update_thread = threading.Thread(target=update)
 

@@ -19,7 +19,6 @@ def date_calculation(date):
     split_date = date.split('-')
     return (365 + float(split_date[1])*30 + float(split_date[2])) / float(split_date[0])
 
-
 def train():
       pollution = pandas.read_csv('AirQualityApp/forecasting/pollution.csv')
 
@@ -49,4 +48,4 @@ def train():
       # Explained variance score: 1 is perfect prediction
       print('R-squared: %.2f' % r2_score(test_y, prediction))
 
-      joblib.dump(model, 'model.joblib')
+      joblib.dump(model, 'AirQualityApp/forecasting/model.joblib')
