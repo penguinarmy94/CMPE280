@@ -70,6 +70,7 @@ def latest(request):
             return HttpResponse(json.dumps(data[0]))
         else:
             data = getNewData(zipcode)
+            print(data[0])
             try:
                 data[0]["stamp"] = data[0]["stamp"].isoformat()
             except:
@@ -90,12 +91,21 @@ def future(request):
         if code:
             forecasted_data = list(models.Forecast.objects.filter(zipcode=zipcode).order_by("stamp").values())
 
-            if not forecasted_data or len(forecasted_data) == 0:
-                print(forecasted_data)
+            if not forecasted_data or len(forecasted_data) == 0 or forecasted_data[0]["stamp"] <= datetime.datetime.now().date():
+                print("New Forecasted Data")
                 data = list(models.AQ.objects.filter(zipcode=zipcode).values('ozone'))
                 results = forecast.predict(zipcode, data)
                 addForecasts(zipcode, results)
                 forecasted_data = list(models.Forecast.objects.filter(zipcode=zipcode).order_by("stamp").values())
+                temp_forecasted_data = []
+                tomorrow = (datetime.datetime.now() + datetime.timedelta(days=1)).date()
+                seven_days = tomorrow + datetime.timedelta(days=7)
+
+                for data in forecasted_data:
+                    if data["stamp"] >= tomorrow and data["stamp"] <= seven_days:
+                        temp_forecasted_data.append(data)
+                
+                forecasted_data = temp_forecasted_data
             else:
                 print("There is forecasted data already set")
 
@@ -109,7 +119,7 @@ def future(request):
         return redirect(index)
 
 def updatePast(request):
-    zips = models.Zip.objects.all()
+    zips = list(models.Zip.objects.all())
 
     historyWeekUpdate(zips, datetime.date.today())
 
@@ -129,13 +139,18 @@ def GetPastData(request):
         if not zipcode:
             return HttpResponse(json.dumps({"type": "none"}))
 
-        sql = models.AQ.objects.filter(zipcode=zipcode).order_by("stamp")
+        sql = list(models.AQ.objects.filter(zipcode=zipcode).order_by("stamp"))
 
-        if sql:
+        if len(sql) > 0:
+            if sql[0].stamp < datetime.date.today():
+                historyWeekUpdate([zipcode], datetime.date.today())
+                sql = list(models.AQ.objects.filter(zipcode=zipcode).order_by("stamp"))[-7:]
+            
             data = []
+            
             for point in sql:
                 data.append({"pm": point.pm, "ozone": point.ozone, "stamp": point.stamp.isoformat()})
-
+            
             return HttpResponse(json.dumps(data))
         else:
             return HttpResponse(json.dumps({"type": "none"}))
@@ -162,9 +177,9 @@ def verifyEmailAndZipcode(request):
     digits = random.sample(number, 6)
     code = "".join(map(str, digits))
     email = request.GET["email"]
-    sender = "cmpe280.airsafe@gmail.com"
+    sender = "luad.developer@gmail.com"
     receiver = email
-    message = """From: AirSafe <cmpe280.airsafe@gmail.com>
+    message = """From: AirSafe <luad.developer@gmail.com>
         To: """ + email + """
         Subject: Verification Code
 
@@ -179,13 +194,13 @@ def verifyEmailAndZipcode(request):
         server.ehlo()
         server.starttls()
         server.ehlo()
-        server.login("cmpe280.airsafe@gmail.com", "airsafe280")
+        server.login(sender, "yO3%h!w*MKzn*sE637$U%")
         server.sendmail(sender, receiver, message)
         server.close()
         print ("Email sent successfully")
         return HttpResponse(code)
-    except smtplib.SMTPException:
-        print ("Error: Unable to send the email")
+    except smtplib.SMTPException as error:
+        print (f"Error: Unable to send the email because {error}")
         return HttpResponse("error")
 
 def subscription(request):
@@ -205,9 +220,9 @@ def subscription(request):
         print ("New user inserted into the DB successfully!")
 
     aq = models.AQ.objects.filter(zipcode=zipcode).order_by("-stamp")[0]
-    sender = "cmpe280.airsafe@gmail.com"
+    sender = "luad.developer@gmail.com"
     receiver = email
-    message = """From: AirSafe <cmpe280.airsafe@gmail.com>
+    message = """From: AirSafe <luad.developer@gmail.com>
         To: """ + email + """
         Subject: AirSafe Test Email
 
@@ -220,13 +235,13 @@ def subscription(request):
         server.ehlo()
         server.starttls()
         server.ehlo()
-        server.login("cmpe280.airsafe@gmail.com", "airsafe280")
+        server.login("luad.developer@gmail.com", "yO3%h!w*MKzn*sE637$U%")
         server.sendmail(sender, receiver, message)
         server.close()
         print ("Email sent successfully")
         return HttpResponse("done")
-    except smtplib.SMTPException:
-        print ("Error: Unable to send the email")
+    except smtplib.SMTPException as error:
+        print (f"Error: Unable to send the email because {error}")
         return HttpResponse("error")
 
 def historyWeekUpdate(zips, today):

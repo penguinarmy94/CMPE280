@@ -29,7 +29,9 @@ ALLOWED_HOSTS = [
 	'airsafe-dev.us-west-1.elasticbeanstalk.com',
 	'localhost',
     '172.31.19.228',
-    'airsafe.sites.luadis.com'
+    'airsafe.sites.luadis.com',
+    '192.168.1.11',
+    '73.222.72.17'
 ]
 
 
@@ -91,8 +93,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'airsafe_main_db',
         'USER': 'root',
-        'PASSWORD': 'testpassword',
-        'HOST': 'airsafedb.cq2wcl14nou2.us-west-1.rds.amazonaws.com',
+        'PASSWORD': 'aw#mWo0V3WQ4!j4pt4cR',
+        'HOST': 'localhost',
         'PORT': '3306'
     }
 }
@@ -139,3 +141,6 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
+
+# ClickJacking
+X_FRAME_OPTIONS = 'DENY'

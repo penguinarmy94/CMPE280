@@ -27,10 +27,11 @@ def update():
             views.updatePast(None)
             views.updateFuture()
             next_date = day + datetime.timedelta(days=1)
+            print("History Update! New Date Set for: " + next_date.isoformat())
         else:
-            print("The day represented as today is: " + day.isoformat())
+            print("Waiting for Date: " + next_date.isoformat())
         
-        time.sleep(60)
+        time.sleep(1800)
         
         # else:
         #     print("The current date and time is: " + day.isoformat() + " " + str(time))
