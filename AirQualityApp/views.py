@@ -91,12 +91,18 @@ def future(request):
         if code:
             forecasted_data = list(models.Forecast.objects.filter(zipcode=zipcode).order_by("stamp").values())
 
+<<<<<<< HEAD
             if not forecasted_data or len(forecasted_data) == 0 or forecasted_data[0]["stamp"] <= datetime.datetime.now().date():
                 print("New Forecasted Data")
+=======
+            if not forecasted_data or len(forecasted_data) == 0:
+                print(forecasted_data)
+>>>>>>> ec9f0420a73d53231e458823da0290110959bd03
                 data = list(models.AQ.objects.filter(zipcode=zipcode).values('ozone'))
                 results = forecast.predict(zipcode, data)
                 addForecasts(zipcode, results)
                 forecasted_data = list(models.Forecast.objects.filter(zipcode=zipcode).order_by("stamp").values())
+<<<<<<< HEAD
                 temp_forecasted_data = []
                 tomorrow = (datetime.datetime.now() + datetime.timedelta(days=1)).date()
                 seven_days = tomorrow + datetime.timedelta(days=7)
@@ -106,6 +112,8 @@ def future(request):
                         temp_forecasted_data.append(data)
                 
                 forecasted_data = temp_forecasted_data
+=======
+>>>>>>> ec9f0420a73d53231e458823da0290110959bd03
             else:
                 print("There is forecasted data already set")
 
@@ -179,7 +187,11 @@ def verifyEmailAndZipcode(request):
     email = request.GET["email"]
     sender = "luad.developer@gmail.com"
     receiver = email
+<<<<<<< HEAD
     message = """From: AirSafe <luad.developer@gmail.com>
+=======
+    message = """From: AirSafe <cmpe280.airsafe@gmail.com>
+>>>>>>> ec9f0420a73d53231e458823da0290110959bd03
         To: """ + email + """
         Subject: Verification Code
 
@@ -222,7 +234,11 @@ def subscription(request):
     aq = models.AQ.objects.filter(zipcode=zipcode).order_by("-stamp")[0]
     sender = "luad.developer@gmail.com"
     receiver = email
+<<<<<<< HEAD
     message = """From: AirSafe <luad.developer@gmail.com>
+=======
+    message = """From: AirSafe <cmpe280.airsafe@gmail.com>
+>>>>>>> ec9f0420a73d53231e458823da0290110959bd03
         To: """ + email + """
         Subject: AirSafe Test Email
 
@@ -244,7 +260,11 @@ def subscription(request):
         print (f"Error: Unable to send the email because {error}")
         return HttpResponse("error")
 
+<<<<<<< HEAD
 def historyWeekUpdate(zips, today):
+=======
+def weekUpdate(zips, today):
+>>>>>>> ec9f0420a73d53231e458823da0290110959bd03
     error = "Error Unloading"
 
     for zip in zips:

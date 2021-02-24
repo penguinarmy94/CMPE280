@@ -145,6 +145,7 @@
     $('.my-card:nth-child(' + $odd + ')').prev().addClass('prev');
     $('.my-card:nth-child(' + $odd + ')').next().addClass('next');
     }
+<<<<<<< HEAD
 
     $('.my-card').click(function() {
     $slide = $('.active').width();
@@ -161,6 +162,24 @@
     $(this).next().addClass('next');
     });
 
+=======
+
+    $('.my-card').click(function() {
+    $slide = $('.active').width();
+    console.log($('.active').position().left);
+    if ($(this).hasClass('next')) {
+        $('.card-carousel').stop(false, true).animate({left: '-=' + $slide});
+    } else if ($(this).hasClass('prev')) {
+        $('.card-carousel').stop(false, true).animate({left: '+=' + $slide});
+    }
+    $(this).removeClass('prev next');
+    $(this).siblings().removeClass('prev active next');
+    $(this).addClass('active');
+    $(this).prev().addClass('prev');
+    $(this).next().addClass('next');
+    });
+
+>>>>>>> ec9f0420a73d53231e458823da0290110959bd03
 
     // Keyboard nav
     $('html body').keydown(function(e) {
@@ -242,7 +261,11 @@
 </div>
     
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<<<<<<< HEAD
 <script src="https://maps.googleapis.com/maps/api/js?key={{GOOGLE_MAPS_API_KEY}}&libraries=places&language={{region}}"  async defer></script>
+=======
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDzZpOXWPKDMkU0rGOwwj_xBOOqN9D6fps&libraries=places&language={{region}}"  async defer></script>
+>>>>>>> ec9f0420a73d53231e458823da0290110959bd03
 <script>
     $(document).keypress(function(e){
         if (e.which == 13){
@@ -587,6 +610,20 @@
                     'type': "GET",
                     'success': function(data) {
                         $.ajax({
+<<<<<<< HEAD
+=======
+                            'url': "/future?" + search,
+                            'type': "GET",
+                            'success': function(newData) {
+                                futureData(newData, zipcode);
+                                console.log(newData);
+                            },
+                            'error': function(error) {
+                                console.log("Future Error: " + error.toString());
+                            }
+                        });
+                        $.ajax({
+>>>>>>> ec9f0420a73d53231e458823da0290110959bd03
                             'url' : '/GetData?' + search,
                             'type' : 'GET',
                             'success' : function(data) {
