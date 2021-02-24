@@ -38,7 +38,7 @@ mysqlclient
 numpy==1.19.2
 oauthlib==3.1.0
 opt-einsum==3.3.0
-pandas==1.2.0
+pandas
 pathlib-mate==0.0.14
 pathspec==0.5.9
 Pillow==8.0.1
